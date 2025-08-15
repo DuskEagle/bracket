@@ -1,0 +1,350 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.tournament-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+/* Group Stage Styling */
+.group-stage {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.groups-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.group {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.group h3 {
+    text-align: center;
+    background: #3498db;
+    color: white;
+    padding: 10px;
+    margin: -20px -20px 20px -20px;
+    border-radius: 6px 6px 0 0;
+}
+
+.match {
+    background: white;
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.match-players {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.player-button {
+    flex: 1;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-button:hover {
+    background: #e9ecef;
+    border-color: #3498db;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.player-name {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.checkmark {
+    color: #27ae60;
+    font-weight: bold;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.player-button.selected {
+    background: #d4edda;
+    border-color: #27ae60;
+    box-shadow: 0 2px 6px rgba(39, 174, 96, 0.2);
+}
+
+.player-button.selected .checkmark {
+    opacity: 1;
+}
+
+.player-button.selected .player-name {
+    color: #155724;
+    font-weight: 600;
+}
+
+.vs-label {
+    color: #6c757d;
+    font-weight: bold;
+    font-size: 14px;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Knockout Stage Styling */
+.knockout-stage {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bracket {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.round {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.round h3 {
+    text-align: center;
+    background: #e74c3c;
+    color: white;
+    padding: 10px;
+    margin: -20px -20px 20px -20px;
+    border-radius: 6px 6px 0 0;
+}
+
+.final h3 {
+    background: #f39c12;
+}
+
+.semifinals .match {
+    border-left: 4px solid #e74c3c;
+}
+
+.final .match {
+    border-left: 4px solid #f39c12;
+    background: #fef9e7;
+}
+
+/* Predictions Summary */
+.predictions-summary {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+}
+
+.summary-item {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border-left: 4px solid #3498db;
+}
+
+.summary-item.group-a {
+    border-left-color: #3498db;
+}
+
+.summary-item.group-b {
+    border-left-color: #9b59b6;
+}
+
+.summary-item.knockout {
+    border-left-color: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .groups-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .match-players {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .player-button {
+        width: 100%;
+    }
+    
+    .vs-label {
+        order: -1;
+        margin-bottom: 5px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+}
+
+/* Loading and interaction states */
+.match:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Group standings table */
+.group-standings {
+    margin-top: 20px;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.group-standings table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.group-standings th,
+.group-standings td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.group-standings th {
+    background: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
+.group-standings tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.qualified {
+    background: #d4edda !important;
+    color: #155724;
+    font-weight: bold;
+}
+
+/* Tiebreaker section */
+.tiebreaker-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+}
+
+.tiebreaker {
+    margin-bottom: 15px;
+}
+
+.tiebreaker:last-child {
+    margin-bottom: 0;
+}
+
+.tiebreaker h4 {
+    color: #856404;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.tiebreaker select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #f39c12;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tiebreaker select:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 5px rgba(243, 156, 18, 0.3);
+}
+
+/* Disabled state for knockout buttons and selects */
+select:disabled {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #dee2e6;
+}
+
+.player-button:disabled {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    border-color: #dee2e6 !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.player-button:disabled .player-name {
+    color: #6c757d !important;
+}
+
+.player-button:disabled .checkmark {
+    opacity: 0 !important;
+}
