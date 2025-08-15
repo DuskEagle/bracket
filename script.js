@@ -84,7 +84,8 @@ function selectWinner(groupName, matchId, winner) {
     
     calculateGroupStandings();
     updateKnockoutStage();
-    updateSummary();
+    updateStandings();
+    updateUrlHash();
 }
 
 // Update match visual feedback
@@ -240,7 +241,8 @@ function selectKnockoutWinner(stage, choice) {
         updateFinalOptions();
     }
     
-    updateSummary();
+    updateStandings();
+    updateUrlHash();
 }
 
 // Update knockout visual feedback
@@ -294,6 +296,9 @@ function updateKnockoutStage() {
     
     // Update semifinal player names and enable/disable buttons
     updateSemifinalButtons();
+    
+    // Update final options in case qualified players changed
+    updateFinalOptions();
     
     // Check if we need tiebreaker UI
     updateTiebreakerUI();
@@ -374,12 +379,14 @@ function updateGroupTiebreakers(groupLetter, players) {
     let tiebreakerHTML = '';
     
     if (firstPlaceTied.length > 1) {
+        const currentFirstSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`] || '';
+        
         tiebreakerHTML += `
             <div class="tiebreaker">
                 <h4>Tiebreaker for 1st Place</h4>
                 <select id="group${groupLetter}FirstTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}First', this.value)">
                     <option value="">Select 1st place winner</option>
-                    ${firstPlaceTied.map(player => `<option value="${player.player}">${player.player}</option>`).join('')}
+                    ${firstPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentFirstSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
                 </select>
             </div>
         `;
@@ -390,12 +397,14 @@ function updateGroupTiebreakers(groupLetter, players) {
             if (firstWinner) {
                 const remainingTied = firstPlaceTied.filter(p => p.player !== firstWinner);
                 if (remainingTied.length > 1) {
+                    const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
+                    
                     tiebreakerHTML += `
                         <div class="tiebreaker">
                             <h4>Tiebreaker for 2nd Place (among remaining tied players)</h4>
                             <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
                                 <option value="">Select 2nd place winner</option>
-                                ${remainingTied.map(player => `<option value="${player.player}">${player.player}</option>`).join('')}
+                                ${remainingTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
                             </select>
                         </div>
                     `;
@@ -404,12 +413,14 @@ function updateGroupTiebreakers(groupLetter, players) {
         }
     } else if (secondPlaceTied.length > 1) {
         // Only show second place tiebreaker if first place is not tied
+        const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
+        
         tiebreakerHTML += `
             <div class="tiebreaker">
                 <h4>Tiebreaker for 2nd Place</h4>
                 <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
                     <option value="">Select 2nd place winner</option>
-                    ${secondPlaceTied.map(player => `<option value="${player.player}">${player.player}</option>`).join('')}
+                    ${secondPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
                 </select>
             </div>
         `;
@@ -429,7 +440,8 @@ function updateTiebreaker(groupKey, position, winner) {
     predictions.tiebreakers[groupKey][position] = winner;
     calculateGroupStandings();
     updateKnockoutStage();
-    updateSummary();
+    updateStandings();
+    updateUrlHash();
 }
 
 // Update final options based on semifinal predictions
@@ -466,50 +478,124 @@ function getSemifinalWinner(semifinal) {
     }
 }
 
-// Update predictions summary
-function updateSummary() {
-    const summaryContent = document.getElementById('summary-content');
+// Update group standings tables
+function updateStandings() {
+    updateGroupStandingsTable('A', groupA, predictions.groupA);
+    updateGroupStandingsTable('B', groupB, predictions.groupB);
+}
+
+// Update standings table for a specific group
+function updateGroupStandingsTable(groupLetter, players, groupPredictions) {
+    const standings = calculateGroupStanding(players, groupPredictions, generateRoundRobinMatches(players));
+    const tableBody = document.querySelector(`#group-${groupLetter.toLowerCase()}-standings tbody`);
+    
+    // Apply tiebreaker results to reorder standings
+    const finalStandings = applyTiebreakersToStandings(standings, groupLetter);
+    
     let html = '';
+    finalStandings.forEach((player, index) => {
+        const isQualified = index < 2; // Top 2 qualify
+        const rowClass = isQualified ? 'qualified' : '';
+        
+        html += `
+            <tr class="${rowClass}">
+                <td>${player.player}</td>
+                <td>${player.wins}</td>
+                <td>${player.losses}</td>
+            </tr>
+        `;
+    });
     
-    // Group A predictions
-    const groupAMatches = generateRoundRobinMatches(groupA);
-    groupAMatches.forEach(match => {
-        const prediction = predictions.groupA[match.id];
-        if (prediction) {
-            html += `<div class="summary-item group-a">Group A: ${match.player1} vs ${match.player2} → <strong>${prediction}</strong></div>`;
+    tableBody.innerHTML = html;
+}
+
+// Apply tiebreaker selections to standings order
+function applyTiebreakersToStandings(standings, groupLetter) {
+    // Check if we have enough matches predicted
+    const totalMatches = 15;
+    const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
+    
+    if (predictedMatches < totalMatches) {
+        return standings; // Return original order if incomplete
+    }
+    
+    // Get tiebreaker selections
+    const firstWinner = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`];
+    const secondWinner = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`];
+    
+    // Group players by win count
+    const winGroups = {};
+    standings.forEach(player => {
+        if (!winGroups[player.wins]) {
+            winGroups[player.wins] = [];
+        }
+        winGroups[player.wins].push(player);
+    });
+    
+    // Sort win counts descending
+    const sortedWins = Object.keys(winGroups).map(Number).sort((a, b) => b - a);
+    
+    let reorderedStandings = [];
+    
+    sortedWins.forEach(wins => {
+        const playersWithWins = winGroups[wins];
+        
+        if (playersWithWins.length === 1) {
+            // No tie, add player as-is
+            reorderedStandings.push(playersWithWins[0]);
+        } else if (playersWithWins.length > 1) {
+            // Handle ties based on tiebreaker selections
+            if (reorderedStandings.length === 0 && firstWinner) {
+                // First place tiebreaker
+                const winner = playersWithWins.find(p => p.player === firstWinner);
+                const losers = playersWithWins.filter(p => p.player !== firstWinner);
+                
+                if (winner) {
+                    reorderedStandings.push(winner);
+                    
+                    if (losers.length === 1) {
+                        // 2-way tie, loser gets second
+                        reorderedStandings.push(losers[0]);
+                    } else if (losers.length > 1 && secondWinner) {
+                        // Multiple losers, check second place tiebreaker
+                        const secondPlace = losers.find(p => p.player === secondWinner);
+                        const remainingLosers = losers.filter(p => p.player !== secondWinner);
+                        
+                        if (secondPlace) {
+                            reorderedStandings.push(secondPlace);
+                            // Add remaining losers in original order
+                            remainingLosers.forEach(p => reorderedStandings.push(p));
+                        } else {
+                            // No second place winner selected, keep original order
+                            losers.forEach(p => reorderedStandings.push(p));
+                        }
+                    } else {
+                        // Add remaining losers in original order
+                        losers.forEach(p => reorderedStandings.push(p));
+                    }
+                } else {
+                    // First place winner not found, keep original order
+                    playersWithWins.forEach(p => reorderedStandings.push(p));
+                }
+            } else if (reorderedStandings.length === 1 && secondWinner) {
+                // Second place tiebreaker (first place already determined)
+                const winner = playersWithWins.find(p => p.player === secondWinner);
+                const losers = playersWithWins.filter(p => p.player !== secondWinner);
+                
+                if (winner) {
+                    reorderedStandings.push(winner);
+                    losers.forEach(p => reorderedStandings.push(p));
+                } else {
+                    playersWithWins.forEach(p => reorderedStandings.push(p));
+                }
+            } else {
+                // No applicable tiebreaker, keep original order
+                playersWithWins.forEach(p => reorderedStandings.push(p));
+            }
         }
     });
     
-    // Group B predictions
-    const groupBMatches = generateRoundRobinMatches(groupB);
-    groupBMatches.forEach(match => {
-        const prediction = predictions.groupB[match.id];
-        if (prediction) {
-            html += `<div class="summary-item group-b">Group B: ${match.player1} vs ${match.player2} → <strong>${prediction}</strong></div>`;
-        }
-    });
-    
-    // Knockout predictions
-    if (predictions.knockout.sf1) {
-        const sf1Winner = getSemifinalWinner('sf1');
-        html += `<div class="summary-item knockout">Semifinal 1: ${predictions.qualifiedA1} vs ${predictions.qualifiedB2} → <strong>${sf1Winner}</strong></div>`;
-    }
-    
-    if (predictions.knockout.sf2) {
-        const sf2Winner = getSemifinalWinner('sf2');
-        html += `<div class="summary-item knockout">Semifinal 2: ${predictions.qualifiedB1} vs ${predictions.qualifiedA2} → <strong>${sf2Winner}</strong></div>`;
-    }
-    
-    if (predictions.knockout.final) {
-        const finalWinner = predictions.knockout.final === 'sf1' ? getSemifinalWinner('sf1') : getSemifinalWinner('sf2');
-        html += `<div class="summary-item knockout">Final: ${getSemifinalWinner('sf1')} vs ${getSemifinalWinner('sf2')} → <strong>${finalWinner}</strong></div>`;
-    }
-    
-    if (html === '') {
-        html = '<p>No predictions made yet. Start by making predictions for the group stage matches!</p>';
-    }
-    
-    summaryContent.innerHTML = html;
+    return reorderedStandings;
 }
 
 // Initialize the tournament
@@ -527,9 +613,536 @@ function initializeTournament() {
     // Initialize knockout stage
     updateKnockoutStage();
     
-    // Initialize summary
-    updateSummary();
+    // Initialize standings
+    updateStandings();
+}
+
+// URL State Management - Binary encoding
+function encodePredictionsToHash() {
+    try {
+        let bits = '';
+        
+        // Group A: 15 matches, 2 bits each (00=no prediction, 01=first player, 10=second player)
+        const groupAMatches = generateRoundRobinMatches(groupA);
+        groupAMatches.forEach(match => {
+            const prediction = predictions.groupA[match.id];
+            if (!prediction) {
+                bits += '00'; // No prediction
+            } else {
+                const isFirstPlayer = prediction === match.player1;
+                bits += isFirstPlayer ? '01' : '10';
+            }
+        });
+        
+        // Group B: 15 matches, 2 bits each
+        const groupBMatches = generateRoundRobinMatches(groupB);
+        groupBMatches.forEach(match => {
+            const prediction = predictions.groupB[match.id];
+            if (!prediction) {
+                bits += '00'; // No prediction
+            } else {
+                const isFirstPlayer = prediction === match.player1;
+                bits += isFirstPlayer ? '01' : '10';
+            }
+        });
+        
+        // Knockout: 3 matches, 2 bits each (00=no prediction, 01=first option, 10=second option)
+        // SF1
+        if (!predictions.knockout.sf1) {
+            bits += '00';
+        } else {
+            bits += predictions.knockout.sf1 === 'a1' ? '01' : '10';
+        }
+        
+        // SF2
+        if (!predictions.knockout.sf2) {
+            bits += '00';
+        } else {
+            bits += predictions.knockout.sf2 === 'b1' ? '01' : '10';
+        }
+        
+        // Final
+        if (!predictions.knockout.final) {
+            bits += '00';
+        } else {
+            bits += predictions.knockout.final === 'sf1' ? '01' : '10';
+        }
+        
+        // Tiebreakers: Up to 4 possible tiebreakers, 3 bits each for player index (0-5)
+        // Group A first place tiebreaker
+        const ta1 = predictions.tiebreakers.groupA?.groupAFirst;
+        if (ta1) {
+            const idx = groupA.indexOf(ta1);
+            bits += '1' + idx.toString(2).padStart(3, '0'); // 1 + 3 bits for index
+        } else {
+            bits += '0000'; // No tiebreaker
+        }
+        
+        // Group A second place tiebreaker
+        const ta2 = predictions.tiebreakers.groupA?.groupASecond;
+        if (ta2) {
+            const idx = groupA.indexOf(ta2);
+            bits += '1' + idx.toString(2).padStart(3, '0');
+        } else {
+            bits += '0000';
+        }
+        
+        // Group B first place tiebreaker
+        const tb1 = predictions.tiebreakers.groupB?.groupBFirst;
+        if (tb1) {
+            const idx = groupB.indexOf(tb1);
+            bits += '1' + idx.toString(2).padStart(3, '0');
+        } else {
+            bits += '0000';
+        }
+        
+        // Group B second place tiebreaker
+        const tb2 = predictions.tiebreakers.groupB?.groupBSecond;
+        if (tb2) {
+            const idx = groupB.indexOf(tb2);
+            bits += '1' + idx.toString(2).padStart(3, '0');
+        } else {
+            bits += '0000';
+        }
+        
+        // Convert binary string to base64
+        return binaryToBase64(bits);
+        
+    } catch (error) {
+        console.error('Error encoding predictions:', error);
+        return '';
+    }
+}
+
+// Binary conversion utilities
+function binaryToBase64(binaryString) {
+    // Pad to make divisible by 8
+    while (binaryString.length % 8 !== 0) {
+        binaryString += '0';
+    }
+    
+    // Convert to bytes
+    let bytes = '';
+    for (let i = 0; i < binaryString.length; i += 8) {
+        const byte = binaryString.substr(i, 8);
+        bytes += String.fromCharCode(parseInt(byte, 2));
+    }
+    
+    // Convert to base64 and make URL-safe
+    return btoa(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function base64ToBinary(base64String) {
+    // Restore base64 padding
+    let padded = base64String.replace(/-/g, '+').replace(/_/g, '/');
+    while (padded.length % 4) {
+        padded += '=';
+    }
+    
+    // Convert from base64
+    const bytes = atob(padded);
+    
+    // Convert to binary string
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += bytes.charCodeAt(i).toString(2).padStart(8, '0');
+    }
+    
+    return binary;
+}
+
+function decodePredictionsFromHash(hash) {
+    try {
+        if (!hash || hash.length === 0) {
+            return null;
+        }
+        
+        // Remove '#' if present
+        const cleanHash = hash.startsWith('#') ? hash.slice(1) : hash;
+        
+        // Try binary format first (new format)
+        try {
+            const binaryString = base64ToBinary(cleanHash);
+            return decodeBinaryPredictions(binaryString);
+        } catch (e) {
+            // Try JSON compressed format (medium format)
+            try {
+                const decompressed = simpleDecompress(cleanHash);
+                const compactData = JSON.parse(decompressed);
+                return decompressPredictions(compactData);
+            } catch (e2) {
+                // Fallback to original format for backward compatibility
+                const jsonString = atob(cleanHash);
+                const stateData = JSON.parse(jsonString);
+                return stateData;
+            }
+        }
+    } catch (error) {
+        console.error('Error decoding predictions:', error);
+        return null;
+    }
+}
+
+function decodeBinaryPredictions(binaryString) {
+    const data = {
+        groupA: {},
+        groupB: {},
+        knockout: {},
+        tiebreakers: { groupA: {}, groupB: {} }
+    };
+    
+    let pos = 0;
+    
+    // Decode Group A: 15 matches, 2 bits each (00=no prediction, 01=first player, 10=second player)
+    const groupAMatches = generateRoundRobinMatches(groupA);
+    groupAMatches.forEach(match => {
+        const predictionBits = binaryString.substr(pos, 2);
+        pos += 2;
+        
+        if (predictionBits === '01') {
+            data.groupA[match.id] = match.player1;
+        } else if (predictionBits === '10') {
+            data.groupA[match.id] = match.player2;
+        }
+        // '00' means no prediction, so we don't set anything
+    });
+    
+    // Decode Group B: 15 matches, 2 bits each
+    const groupBMatches = generateRoundRobinMatches(groupB);
+    groupBMatches.forEach(match => {
+        const predictionBits = binaryString.substr(pos, 2);
+        pos += 2;
+        
+        if (predictionBits === '01') {
+            data.groupB[match.id] = match.player1;
+        } else if (predictionBits === '10') {
+            data.groupB[match.id] = match.player2;
+        }
+        // '00' means no prediction, so we don't set anything
+    });
+    
+    // Decode Knockout: 3 matches, 2 bits each (00=no prediction, 01=first option, 10=second option)
+    // SF1
+    const sf1Bits = binaryString.substr(pos, 2);
+    pos += 2;
+    if (sf1Bits === '01') data.knockout.sf1 = 'a1';
+    else if (sf1Bits === '10') data.knockout.sf1 = 'b2';
+    
+    // SF2
+    const sf2Bits = binaryString.substr(pos, 2);
+    pos += 2;
+    if (sf2Bits === '01') data.knockout.sf2 = 'b1';
+    else if (sf2Bits === '10') data.knockout.sf2 = 'a2';
+    
+    // Final
+    const finalBits = binaryString.substr(pos, 2);
+    pos += 2;
+    if (finalBits === '01') data.knockout.final = 'sf1';
+    else if (finalBits === '10') data.knockout.final = 'sf2';
+    
+    // Decode Tiebreakers: 4 possible tiebreakers, 4 bits each
+    // Group A first place
+    if (binaryString[pos] === '1') {
+        pos++; // Skip the flag bit
+        const idx = parseInt(binaryString.substr(pos, 3), 2);
+        data.tiebreakers.groupA.groupAFirst = groupA[idx];
+        pos += 3;
+    } else {
+        pos += 4;
+    }
+    
+    // Group A second place
+    if (binaryString[pos] === '1') {
+        pos++;
+        const idx = parseInt(binaryString.substr(pos, 3), 2);
+        data.tiebreakers.groupA.groupASecond = groupA[idx];
+        pos += 3;
+    } else {
+        pos += 4;
+    }
+    
+    // Group B first place
+    if (binaryString[pos] === '1') {
+        pos++;
+        const idx = parseInt(binaryString.substr(pos, 3), 2);
+        data.tiebreakers.groupB.groupBFirst = groupB[idx];
+        pos += 3;
+    } else {
+        pos += 4;
+    }
+    
+    // Group B second place
+    if (binaryString[pos] === '1') {
+        pos++;
+        const idx = parseInt(binaryString.substr(pos, 3), 2);
+        data.tiebreakers.groupB.groupBSecond = groupB[idx];
+        pos += 3;
+    } else {
+        pos += 4;
+    }
+    
+    return data;
+}
+
+// Decompress the data back to original format
+function decompressPredictions(compact) {
+    const data = {
+        groupA: {},
+        groupB: {},
+        knockout: {},
+        tiebreakers: { groupA: {}, groupB: {} }
+    };
+    
+    // Decompress group A predictions
+    if (compact.a) {
+        Object.keys(compact.a).forEach(matchId => {
+            const winnerIndex = compact.a[matchId];
+            const [p1Idx, p2Idx] = matchId.split('-').map(Number);
+            const winner = winnerIndex === 0 ? groupA[p1Idx] : groupA[p2Idx];
+            data.groupA[matchId] = winner;
+        });
+    }
+    
+    // Decompress group B predictions
+    if (compact.b) {
+        Object.keys(compact.b).forEach(matchId => {
+            const winnerIndex = compact.b[matchId];
+            const [p1Idx, p2Idx] = matchId.split('-').map(Number);
+            const winner = winnerIndex === 0 ? groupB[p1Idx] : groupB[p2Idx];
+            data.groupB[matchId] = winner;
+        });
+    }
+    
+    // Decompress knockout predictions
+    if (compact.k) {
+        if (compact.k.s1 !== undefined) data.knockout.sf1 = compact.k.s1 === 0 ? 'a1' : 'b2';
+        if (compact.k.s2 !== undefined) data.knockout.sf2 = compact.k.s2 === 0 ? 'b1' : 'a2';
+        if (compact.k.f !== undefined) data.knockout.final = compact.k.f === 0 ? 'sf1' : 'sf2';
+    }
+    
+    // Decompress tiebreakers
+    if (compact.ta) {
+        Object.keys(compact.ta).forEach(key => {
+            const playerIndex = compact.ta[key];
+            data.tiebreakers.groupA[key] = groupA[playerIndex];
+        });
+    }
+    
+    if (compact.tb) {
+        Object.keys(compact.tb).forEach(key => {
+            const playerIndex = compact.tb[key];
+            data.tiebreakers.groupB[key] = groupB[playerIndex];
+        });
+    }
+    
+    return data;
+}
+
+// Simple decompression - reverse of simpleCompress
+function simpleDecompress(compressed) {
+    // Restore base64 padding and convert back
+    let padded = compressed.replace(/-/g, '+').replace(/_/g, '/');
+    while (padded.length % 4) {
+        padded += '=';
+    }
+    
+    let decompressed = atob(padded);
+    
+    // Reverse the character substitutions
+    decompressed = decompressed
+        .replace(/f/g, 'false')
+        .replace(/t/g, 'true')  
+        .replace(/n/g, 'null')
+        .replace(/:([0-9]+)/g, '":$1')     // Add quotes back to numeric values
+        .replace(/,([^":{}\[\],]+):/g, ',"$1":')  // Add quotes back to object keys
+        .replace(/{([^":{}\[\],]+):/g, '{"$1":');   // Add quotes back to first object key
+    
+    return decompressed;
+}
+
+function updateUrlHash() {
+    const hash = encodePredictionsToHash();
+    if (hash) {
+        // Update URL without triggering page reload
+        window.history.replaceState(null, null, '#' + hash);
+    }
+}
+
+function loadPredictionsFromUrl() {
+    const hash = window.location.hash;
+    const decodedData = decodePredictionsFromHash(hash);
+    
+    if (decodedData) {
+        // Load the predictions
+        predictions.groupA = decodedData.groupA || {};
+        predictions.groupB = decodedData.groupB || {};
+        predictions.knockout = decodedData.knockout || {};
+        predictions.tiebreakers = decodedData.tiebreakers || { groupA: {}, groupB: {} };
+        
+        // Update visual state to match loaded predictions
+        updateVisualStateFromPredictions();
+        
+        return true;
+    }
+    
+    return false;
+}
+
+function updateVisualStateFromPredictions() {
+    // Update group stage visual selections
+    updateGroupVisualSelections('a', predictions.groupA);
+    updateGroupVisualSelections('b', predictions.groupB);
+    
+    // Update knockout stage visual selections
+    if (predictions.knockout.sf1) {
+        updateKnockoutVisuals('sf1', predictions.knockout.sf1);
+    }
+    if (predictions.knockout.sf2) {
+        updateKnockoutVisuals('sf2', predictions.knockout.sf2);
+    }
+    if (predictions.knockout.final) {
+        updateKnockoutVisuals('final', predictions.knockout.final);
+    }
+    
+    // Recalculate and update everything (don't update URL when loading from URL)
+    calculateGroupStandings();
+    updateKnockoutStage();
+    updateStandings();
+}
+
+function updateGroupVisualSelections(groupName, groupPredictions) {
+    Object.keys(groupPredictions).forEach(matchId => {
+        const winner = groupPredictions[matchId];
+        if (winner) {
+            updateMatchVisuals(`${groupName}-${matchId}`, winner);
+        }
+    });
+}
+
+// Copy URL functionality
+function copyUrlToClipboard() {
+    const currentUrl = window.location.href;
+    
+    if (navigator.clipboard && window.isSecureContext) {
+        // Use modern clipboard API
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            showCopyFeedback('Copied!');
+        }).catch(() => {
+            fallbackCopyToClipboard(currentUrl);
+        });
+    } else {
+        // Fallback for older browsers
+        fallbackCopyToClipboard(currentUrl);
+    }
+}
+
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showCopyFeedback('Copied!');
+        } else {
+            showCopyFeedback('Copy failed');
+        }
+    } catch (err) {
+        showCopyFeedback('Copy not supported');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+function showCopyFeedback(message) {
+    const feedback = document.getElementById('copy-feedback');
+    feedback.textContent = message;
+    feedback.style.opacity = '1';
+    
+    setTimeout(() => {
+        feedback.style.opacity = '0';
+    }, 2000);
+}
+
+// Clear all predictions and reset to initial state
+function clearAllPredictions() {
+    // Reset predictions to initial state
+    predictions.groupA = {};
+    predictions.groupB = {};
+    predictions.knockout = {};
+    predictions.tiebreakers = { groupA: {}, groupB: {} };
+    
+    // Reset to default qualified placeholders
+    predictions.qualifiedA1 = 'Group A 1st';
+    predictions.qualifiedA2 = 'Group A 2nd';
+    predictions.qualifiedB1 = 'Group B 1st';
+    predictions.qualifiedB2 = 'Group B 2nd';
+    
+    // Clear all visual selections in group stage
+    clearGroupVisualSelections('a');
+    clearGroupVisualSelections('b');
+    
+    // Clear knockout visual selections
+    clearKnockoutVisualSelections();
+    
+    // Recalculate and update everything
+    calculateGroupStandings();
+    updateKnockoutStage();
+    updateStandings();
+    updateUrlHash();
+    
+    // Clear URL hash to reset to clean state
+    window.history.replaceState(null, null, window.location.pathname);
+}
+
+// Clear group stage visual selections
+function clearGroupVisualSelections(groupName) {
+    const matches = generateRoundRobinMatches(groupName === 'a' ? groupA : groupB);
+    matches.forEach(match => {
+        const player1Button = document.getElementById(`${groupName}-${match.id}-player1`);
+        const player2Button = document.getElementById(`${groupName}-${match.id}-player2`);
+        
+        if (player1Button) player1Button.classList.remove('selected');
+        if (player2Button) player2Button.classList.remove('selected');
+    });
+}
+
+// Clear knockout visual selections
+function clearKnockoutVisualSelections() {
+    // Clear semifinal selections
+    const sf1A1 = document.getElementById('sf1-a1');
+    const sf1B2 = document.getElementById('sf1-b2');
+    const sf2B1 = document.getElementById('sf2-b1');
+    const sf2A2 = document.getElementById('sf2-a2');
+    
+    if (sf1A1) sf1A1.classList.remove('selected');
+    if (sf1B2) sf1B2.classList.remove('selected');
+    if (sf2B1) sf2B1.classList.remove('selected');
+    if (sf2A2) sf2A2.classList.remove('selected');
+    
+    // Clear final selections
+    const finalSf1 = document.getElementById('final-sf1');
+    const finalSf2 = document.getElementById('final-sf2');
+    
+    if (finalSf1) finalSf1.classList.remove('selected');
+    if (finalSf2) finalSf2.classList.remove('selected');
 }
 
 // Run when page loads
-document.addEventListener('DOMContentLoaded', initializeTournament);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTournament();
+    
+    // Try to load predictions from URL
+    const loaded = loadPredictionsFromUrl();
+    
+    if (!loaded) {
+        // No URL data, start fresh and update standings
+        updateStandings();
+    }
+});
