@@ -183,20 +183,50 @@ function determineQualifiers(standings, groupLetter) {
     
     if (firstPlaceTied.length > 1) {
         // Tie for first place
-        const tiebreakerKey = `group${groupLetter}First`;
-        if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
-            first = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
-            // The loser of the first place tiebreaker should get second place (if it's a 2-way tie)
-            if (firstPlaceTied.length === 2) {
+        if (firstPlaceTied.length === 2) {
+            // 2-way tie: use head-to-head automatically
+            const headToHeadWinner = resolveHeadToHead(firstPlaceTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
+            if (headToHeadWinner) {
+                first = headToHeadWinner;
                 const loser = firstPlaceTied.find(p => p.player !== first);
                 second = loser.player;
             } else {
-                // More than 2-way tie for first, need to determine second from remaining tied players
+                // Head-to-head not available, still need tiebreaker
+                const tiebreakerKey = `group${groupLetter}First`;
+                if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
+                    first = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
+                    const loser = firstPlaceTied.find(p => p.player !== first);
+                    second = loser.player;
+                } else {
+                    first = `TIE: ${firstPlaceTied.map(p => p.player).join(', ')}`;
+                    second = `Group ${groupLetter} 2nd (waiting for 1st place tiebreaker)`;
+                }
+            }
+        } else {
+            // 3+ way tie: use manual tiebreaker
+            const tiebreakerKey = `group${groupLetter}First`;
+            if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
+                first = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
+                // Determine second from remaining tied players
                 const remainingTied = firstPlaceTied.filter(p => p.player !== first);
                 if (remainingTied.length === 1) {
                     second = remainingTied[0].player;
+                } else if (remainingTied.length === 2) {
+                    // 2-way tie for second: use head-to-head
+                    const headToHeadWinner = resolveHeadToHead(remainingTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
+                    if (headToHeadWinner) {
+                        second = headToHeadWinner;
+                    } else {
+                        // Need manual tiebreaker for second
+                        const tiebreakerKey2 = `group${groupLetter}Second`;
+                        if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey2]) {
+                            second = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey2];
+                        } else {
+                            second = `TIE: ${remainingTied.map(p => p.player).join(', ')}`;
+                        }
+                    }
                 } else {
-                    // Still tied for second among first place losers
+                    // 3+ way tie for second: need manual tiebreaker
                     const tiebreakerKey2 = `group${groupLetter}Second`;
                     if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey2]) {
                         second = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey2];
@@ -204,22 +234,38 @@ function determineQualifiers(standings, groupLetter) {
                         second = `TIE: ${remainingTied.map(p => p.player).join(', ')}`;
                     }
                 }
+            } else {
+                first = `TIE: ${firstPlaceTied.map(p => p.player).join(', ')}`;
+                second = `Group ${groupLetter} 2nd (waiting for 1st place tiebreaker)`;
             }
-        } else {
-            first = `TIE: ${firstPlaceTied.map(p => p.player).join(', ')}`;
-            // Can't determine second until first is resolved
-            second = `Group ${groupLetter} 2nd (waiting for 1st place tiebreaker)`;
         }
     } else {
         first = standings[0].player;
         
         if (secondPlaceTied.length > 1) {
             // Tie for second place (not involving first place)
-            const tiebreakerKey = `group${groupLetter}Second`;
-            if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
-                second = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
+            if (secondPlaceTied.length === 2) {
+                // 2-way tie: use head-to-head automatically
+                const headToHeadWinner = resolveHeadToHead(secondPlaceTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
+                if (headToHeadWinner) {
+                    second = headToHeadWinner;
+                } else {
+                    // Head-to-head not available, need tiebreaker
+                    const tiebreakerKey = `group${groupLetter}Second`;
+                    if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
+                        second = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
+                    } else {
+                        second = `TIE: ${secondPlaceTied.map(p => p.player).join(', ')}`;
+                    }
+                }
             } else {
-                second = `TIE: ${secondPlaceTied.map(p => p.player).join(', ')}`;
+                // 3+ way tie: use manual tiebreaker
+                const tiebreakerKey = `group${groupLetter}Second`;
+                if (predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey]) {
+                    second = predictions.tiebreakers[`group${groupLetter}`][tiebreakerKey];
+                } else {
+                    second = `TIE: ${secondPlaceTied.map(p => p.player).join(', ')}`;
+                }
             }
         } else {
             second = standings[1].player;
@@ -227,6 +273,27 @@ function determineQualifiers(standings, groupLetter) {
     }
     
     return { first, second };
+}
+
+// Resolve head-to-head matchup between two tied players
+function resolveHeadToHead(tiedPlayers, groupPredictions) {
+    if (tiedPlayers.length !== 2) return null;
+    
+    const player1 = tiedPlayers[0].player;
+    const player2 = tiedPlayers[1].player;
+    
+    // Find the match between these two players
+    const matches = generateRoundRobinMatches(groupA.includes(player1) ? groupA : groupB);
+    const headToHeadMatch = matches.find(match => 
+        (match.player1 === player1 && match.player2 === player2) ||
+        (match.player1 === player2 && match.player2 === player1)
+    );
+    
+    if (headToHeadMatch && groupPredictions[headToHeadMatch.id]) {
+        return groupPredictions[headToHeadMatch.id];
+    }
+    
+    return null; // No head-to-head prediction available
 }
 
 // Handle knockout winner selection
@@ -378,12 +445,13 @@ function updateGroupTiebreakers(groupLetter, players) {
     
     let tiebreakerHTML = '';
     
-    if (firstPlaceTied.length > 1) {
+    // Only show tiebreaker dropdowns for 3+ way ties
+    if (firstPlaceTied.length > 2) {
         const currentFirstSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`] || '';
         
         tiebreakerHTML += `
             <div class="tiebreaker">
-                <h4>Tiebreaker for 1st Place</h4>
+                <h4>Tiebreaker for 1st Place (${firstPlaceTied.length}-way tie)</h4>
                 <select id="group${groupLetter}FirstTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}First', this.value)">
                     <option value="">Select 1st place winner</option>
                     ${firstPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentFirstSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
@@ -391,39 +459,69 @@ function updateGroupTiebreakers(groupLetter, players) {
             </div>
         `;
         
-        // If more than 2-way tie for first, might need second place tiebreaker among losers
-        if (firstPlaceTied.length > 2) {
-            const firstWinner = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`];
-            if (firstWinner) {
-                const remainingTied = firstPlaceTied.filter(p => p.player !== firstWinner);
-                if (remainingTied.length > 1) {
-                    const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
-                    
-                    tiebreakerHTML += `
-                        <div class="tiebreaker">
-                            <h4>Tiebreaker for 2nd Place (among remaining tied players)</h4>
-                            <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
-                                <option value="">Select 2nd place winner</option>
-                                ${remainingTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                }
+        // If first place is selected, check if remaining players need second place tiebreaker
+        const firstWinner = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`];
+        if (firstWinner) {
+            const remainingTied = firstPlaceTied.filter(p => p.player !== firstWinner);
+            if (remainingTied.length > 2) {
+                const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
+                
+                tiebreakerHTML += `
+                    <div class="tiebreaker">
+                        <h4>Tiebreaker for 2nd Place (${remainingTied.length}-way tie)</h4>
+                        <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
+                            <option value="">Select 2nd place winner</option>
+                            ${remainingTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
             }
         }
-    } else if (secondPlaceTied.length > 1) {
-        // Only show second place tiebreaker if first place is not tied
+    } else if (firstPlaceTied.length === 2) {
+        // 2-way tie for first: check if head-to-head is missing
+        const headToHeadWinner = resolveHeadToHead(firstPlaceTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
+        if (!headToHeadWinner) {
+            const currentFirstSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`] || '';
+            
+            tiebreakerHTML += `
+                <div class="tiebreaker">
+                    <h4>Tiebreaker for 1st Place (head-to-head not predicted)</h4>
+                    <select id="group${groupLetter}FirstTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}First', this.value)">
+                        <option value="">Select 1st place winner</option>
+                        ${firstPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentFirstSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+        }
+    } else if (secondPlaceTied.length > 2) {
+        // 3+ way tie for second place only
         const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
         
         tiebreakerHTML += `
             <div class="tiebreaker">
-                <h4>Tiebreaker for 2nd Place</h4>
+                <h4>Tiebreaker for 2nd Place (${secondPlaceTied.length}-way tie)</h4>
                 <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
                     <option value="">Select 2nd place winner</option>
                     ${secondPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
                 </select>
             </div>
         `;
+    } else if (secondPlaceTied.length === 2) {
+        // 2-way tie for second: check if head-to-head is missing
+        const headToHeadWinner = resolveHeadToHead(secondPlaceTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
+        if (!headToHeadWinner) {
+            const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
+            
+            tiebreakerHTML += `
+                <div class="tiebreaker">
+                    <h4>Tiebreaker for 2nd Place (head-to-head not predicted)</h4>
+                    <select id="group${groupLetter}SecondTiebreaker" onchange="updateTiebreaker('group${groupLetter}', 'group${groupLetter}Second', this.value)">
+                        <option value="">Select 2nd place winner</option>
+                        ${secondPlaceTied.map(player => `<option value="${player.player}" ${player.player === currentSecondSelection ? 'selected' : ''}>${player.player}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+        }
     }
     
     // Only show tiebreaker container if there are actual tiebreakers
@@ -1091,6 +1189,9 @@ function clearAllPredictions() {
     // Clear knockout visual selections
     clearKnockoutVisualSelections();
     
+    // Clear tiebreaker sections
+    clearTiebreakerSections();
+    
     // Recalculate and update everything
     calculateGroupStandings();
     updateKnockoutStage();
@@ -1132,6 +1233,22 @@ function clearKnockoutVisualSelections() {
     
     if (finalSf1) finalSf1.classList.remove('selected');
     if (finalSf2) finalSf2.classList.remove('selected');
+}
+
+// Clear tiebreaker sections
+function clearTiebreakerSections() {
+    const groupATiebreakers = document.getElementById('group-a-tiebreakers');
+    const groupBTiebreakers = document.getElementById('group-b-tiebreakers');
+    
+    if (groupATiebreakers) {
+        groupATiebreakers.style.display = 'none';
+        groupATiebreakers.innerHTML = '';
+    }
+    
+    if (groupBTiebreakers) {
+        groupBTiebreakers.style.display = 'none';
+        groupBTiebreakers.innerHTML = '';
+    }
 }
 
 // Run when page loads
