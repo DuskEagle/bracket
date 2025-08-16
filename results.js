@@ -543,7 +543,5 @@ function updateGroupVisualSelections(groupName, groupResults) {
     });
 }
 
-// Run when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    initializeTournament();
-});
+// Initialization is now handled by the HTML page after script loads
+// (No automatic DOMContentLoaded listener to avoid timing conflicts)

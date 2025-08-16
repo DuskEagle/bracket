@@ -11,7 +11,7 @@
         <div class="header-section">
             <h1>2025 Pro Qual</h1>
             <div class="share-section">
-                <button id="predictions-button" onclick="window.location.href='predictions.html'">🎯 Make Predictions</button>
+                <button id="predictions-button" onclick="window.location.href='predictions.html'">Make Predictions</button>
             </div>
         </div>
         
@@ -149,6 +149,29 @@
         </div>
     </div>
     
-    <script src="results.js"></script>
+    <script>
+        // Dynamically load results.js based on environment
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === "";
+        const resultsScriptUrl = isLocalhost 
+            ? 'results.js' 
+            : 'https://raw.githubusercontent.com/DuskEagle/bracket/refs/heads/main/results.js';
+        
+        const script = document.createElement('script');
+        script.src = resultsScriptUrl;
+        script.async = false;
+        
+        // Ensure initialization happens after script loads
+        script.onload = function() {
+            if (typeof initializeTournament === 'function') {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeTournament);
+                } else {
+                    initializeTournament();
+                }
+            }
+        };
+        
+        document.head.appendChild(script);
+    </script>
 </body>
 </html>
