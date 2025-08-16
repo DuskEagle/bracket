@@ -212,7 +212,7 @@ function determineQualifiers(standings, groupLetter) {
                 if (remainingTied.length === 1) {
                     second = remainingTied[0].player;
                 } else if (remainingTied.length === 2) {
-                    // 2-way tie for second: use head-to-head
+                    // 2-way tie for second: use head-to-head first, then manual tiebreaker
                     const headToHeadWinner = resolveHeadToHead(remainingTied, groupLetter === 'A' ? predictions.groupA : predictions.groupB);
                     if (headToHeadWinner) {
                         second = headToHeadWinner;
@@ -463,7 +463,7 @@ function updateGroupTiebreakers(groupLetter, players) {
         const firstWinner = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}First`];
         if (firstWinner) {
             const remainingTied = firstPlaceTied.filter(p => p.player !== firstWinner);
-            if (remainingTied.length > 2) {
+            if (remainingTied.length > 1) {
                 const currentSecondSelection = predictions.tiebreakers[`group${groupLetter}`][`group${groupLetter}Second`] || '';
                 
                 tiebreakerHTML += `
