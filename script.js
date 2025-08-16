@@ -166,8 +166,8 @@ function determineQualifiers(standings, groupLetter) {
     
     if (predictedMatches < totalMatches) {
         return {
-            first: `Group ${groupLetter} 1st (incomplete)`,
-            second: `Group ${groupLetter} 2nd (incomplete)`
+            first: `Group ${groupLetter} 1st`,
+            second: `Group ${groupLetter} 2nd`
         };
     }
     
@@ -384,7 +384,7 @@ function updateSemifinalButtons() {
     
     // Only enable buttons if we have determined players (no ties)
     const sf1Enabled = !predictions.qualifiedA1.includes('TIE') && !predictions.qualifiedB2.includes('TIE') && 
-                      !predictions.qualifiedA1.includes('incomplete') && !predictions.qualifiedB2.includes('incomplete');
+                      predictions.qualifiedA1 !== 'Group A 1st' && predictions.qualifiedB2 !== 'Group B 2nd';
     
     sf1A1Button.disabled = !sf1Enabled;
     sf1B2Button.disabled = !sf1Enabled;
@@ -399,7 +399,7 @@ function updateSemifinalButtons() {
     sf2A2Name.textContent = predictions.qualifiedA2;
     
     const sf2Enabled = !predictions.qualifiedB1.includes('TIE') && !predictions.qualifiedA2.includes('TIE') &&
-                      !predictions.qualifiedB1.includes('incomplete') && !predictions.qualifiedA2.includes('incomplete');
+                      predictions.qualifiedB1 !== 'Group B 1st' && predictions.qualifiedA2 !== 'Group A 2nd';
     
     sf2B1Button.disabled = !sf2Enabled;
     sf2A2Button.disabled = !sf2Enabled;
@@ -591,8 +591,15 @@ function updateGroupStandingsTable(groupLetter, players, groupPredictions) {
     const finalStandings = applyTiebreakersToStandings(standings, groupLetter);
     
     let html = '';
+    
+    // Check if all group matches have been played (15 total matches per group)
+    const totalMatches = 15;
+    const playedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2; // Divide by 2 since each match counts for 2 players
+    const groupComplete = playedMatches === totalMatches;
+    
     finalStandings.forEach((player, index) => {
-        const isQualified = index < 2; // Top 2 qualify
+        // Only show as qualified if group is complete AND player is in top 2
+        const isQualified = groupComplete && index < 2;
         const rowClass = isQualified ? 'qualified' : '';
         
         html += `

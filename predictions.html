@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025 Pro Qual</title>
+    <title>2025 Pro Qual - Predictions</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="header-section">
-            <h1>2025 Pro Qual</h1>
+            <h1>2025 Pro Qual<br>Make and share predictions</h1>
             <div class="share-section">
-                <button id="predictions-button" onclick="window.location.href='predictions.html'">🎯 Make Predictions</button>
+                <button id="results-button" onclick="window.location.href='index.html'">📊 View Results</button>
+                <button id="new-prediction-button" onclick="clearAllPredictions()">🔄 New Prediction</button>
+                <button id="share-button" onclick="copyUrlToClipboard()">📋 Copy Shareable URL</button>
+                <span id="copy-feedback" class="copy-feedback"></span>
             </div>
         </div>
         
@@ -52,15 +55,15 @@
                                 <span class="match-label">SF1: Group A 1st vs Group B 2nd</span>
                             </div>
                             <div class="match-players">
-                                <div class="player-button results-only" id="sf1-a1">
+                                <button class="player-button" id="sf1-a1" onclick="selectKnockoutWinner('sf1', 'a1')">
                                     <span class="player-name" id="sf1-a1-name">Group A 1st</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                                 <span class="vs-label">vs</span>
-                                <div class="player-button results-only" id="sf1-b2">
+                                <button class="player-button" id="sf1-b2" onclick="selectKnockoutWinner('sf1', 'b2')">
                                     <span class="player-name" id="sf1-b2-name">Group B 2nd</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                         
@@ -69,15 +72,15 @@
                                 <span class="match-label">SF2: Group B 1st vs Group A 2nd</span>
                             </div>
                             <div class="match-players">
-                                <div class="player-button results-only" id="sf2-b1">
+                                <button class="player-button" id="sf2-b1" onclick="selectKnockoutWinner('sf2', 'b1')">
                                     <span class="player-name" id="sf2-b1-name">Group B 1st</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                                 <span class="vs-label">vs</span>
-                                <div class="player-button results-only" id="sf2-a2">
+                                <button class="player-button" id="sf2-a2" onclick="selectKnockoutWinner('sf2', 'a2')">
                                     <span class="player-name" id="sf2-a2-name">Group A 2nd</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -90,15 +93,15 @@
                                 <span class="match-label">Final: SF1 Winner vs SF2 Winner</span>
                             </div>
                             <div class="match-players">
-                                <div class="player-button results-only" id="final-sf1">
+                                <button class="player-button" id="final-sf1" onclick="selectKnockoutWinner('final', 'sf1')">
                                     <span class="player-name" id="final-sf1-name">SF1 Winner</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                                 <span class="vs-label">vs</span>
-                                <div class="player-button results-only" id="final-sf2">
+                                <button class="player-button" id="final-sf2" onclick="selectKnockoutWinner('final', 'sf2')">
                                     <span class="player-name" id="final-sf2-name">SF2 Winner</span>
                                     <span class="checkmark">✓</span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -149,6 +152,6 @@
         </div>
     </div>
     
-    <script src="results.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
