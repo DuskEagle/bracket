@@ -405,8 +405,7 @@ h3 {
     }
     
     .vs-label {
-        order: -1;
-        margin-bottom: 3px;
+        margin: 3px 0;
         font-size: 9px;
     }
     
