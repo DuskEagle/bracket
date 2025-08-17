@@ -1,6 +1,6 @@
 // Embedded CSV data - edit this string to update results
 const csvData = `# Group A
-Guanyu Song,Edward Zhang,0,https://online-go.com/review/1521372
+Guanyu Song,Edward Zhang,1,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,2,https://online-go.com/review/1521373
 Jeremiah Donley,Edward Zhang,0,
 Guanyu Song,Evan Tan,0,
@@ -13,7 +13,7 @@ Michael Xu,Edward Zhang,0,
 
 # Group B
 Qiyou Wu,Wanqi Zhu,1,https://online-go.com/review/1521383
-Eric Yoder,Yuan Zhou,0,https://online-go.com/review/1521374
+Eric Yoder,Yuan Zhou,2,https://online-go.com/review/1521374
 Henry Zhang,Daniel Zhou,2,https://online-go.com/review/1521379
 Qiyou Wu,Yuan Zhou,0,
 Daniel Zhou,Wanqi Zhu,0,
