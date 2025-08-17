@@ -1,6 +1,6 @@
 // Embedded CSV data - edit this string to update results
 const csvData = `# Group A
-Guanyu Song,Edward Zhang,0,https://online-go.com/review/152137
+Guanyu Song,Edward Zhang,0,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,0,https://online-go.com/review/1521373
 Jeremiah Donley,Guanyu Song,0,
 Jeremiah Donley,Evan Tan,0,
