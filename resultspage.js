@@ -166,7 +166,8 @@ function calculateGroupStanding(players, groupResults, matches) {
 
 // Determine qualifiers - simplified for results display
 function determineQualifiers(standings, groupLetter) {
-    const totalMatches = 15;
+    const numPlayers = standings.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
     
     if (predictedMatches < totalMatches) {

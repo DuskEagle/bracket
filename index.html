@@ -169,6 +169,14 @@
         const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === "";
         
         async function loadResultsScript() {
+            // Always load locally (GitHub production loading temporarily disabled)
+            const script = document.createElement('script');
+            script.src = 'results.js';
+            script.async = false;
+            script.onload = initializeWhenReady;
+            document.head.appendChild(script);
+            
+            /* Temporarily disabled - GitHub production loading
             if (isLocalhost) {
                 // Local: Load as normal script
                 const script = document.createElement('script');
@@ -201,6 +209,7 @@
                     initializeWhenReady();
                 }
             }
+            */
         }
         
         function initializeWhenReady() {

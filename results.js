@@ -1,37 +1,32 @@
 // Embedded CSV data - edit this string to update results
 const csvData = `# Group A
+Guanyu Song,Edward Zhang,0,https://online-go.com/review/152137
+Evan Tan,Michael Xu,0,https://online-go.com/review/1521373
+Jeremiah Donley,Guanyu Song,0,
+Jeremiah Donley,Evan Tan,0,
+Jeremiah Donley,Michael Xu,0,
+Jeremiah Donley,Edward Zhang,0,
 Guanyu Song,Evan Tan,0,
-Guanyu Song,Eric Yoder,0,
-Guanyu Song,Edward Zhang,0,
-Guanyu Song,Daniel Zhou,0,
-Guanyu Song,Wanqi Zhu,0,
-Evan Tan,Eric Yoder,0,
+Guanyu Song,Michael Xu,0,
 Evan Tan,Edward Zhang,0,
-Evan Tan,Daniel Zhou,0,
-Evan Tan,Wanqi Zhu,0,
-Eric Yoder,Edward Zhang,0,
-Eric Yoder,Daniel Zhou,0,
-Eric Yoder,Wanqi Zhu,0,
-Edward Zhang,Daniel Zhou,0,
-Edward Zhang,Wanqi Zhu,0,
-Daniel Zhou,Wanqi Zhu,0,
+Michael Xu,Edward Zhang,0,
 
 # Group B
-Jeremiah Donley,Qiyou Wu,0,
-Jeremiah Donley,Michael Xu,0,
-Jeremiah Donley,Aaron Ye,0,
-Jeremiah Donley,Henry Zhang,0,
-Jeremiah Donley,Yuan Zhou,0,
-Qiyou Wu,Michael Xu,0,
-Qiyou Wu,Aaron Ye,0,
+Eric Yoder,Yuan Zhou,0,https://online-go.com/review/1521374
+Henry Zhang,Daniel Zhou,0,https://online-go.com/review/1521379
+Qiyou Wu,Wanqi Zhu,0,https://online-go.com/review/1521383
+Qiyou Wu,Eric Yoder,0,
 Qiyou Wu,Henry Zhang,0,
+Qiyou Wu,Daniel Zhou,0,
 Qiyou Wu,Yuan Zhou,0,
-Michael Xu,Aaron Ye,0,
-Michael Xu,Henry Zhang,0,
-Michael Xu,Yuan Zhou,0,
-Aaron Ye,Henry Zhang,0,
-Aaron Ye,Yuan Zhou,0,
+Eric Yoder,Henry Zhang,0,
+Eric Yoder,Daniel Zhou,0,
+Eric Yoder,Wanqi Zhu,0,
 Henry Zhang,Yuan Zhou,0,
+Henry Zhang,Wanqi Zhu,0,
+Daniel Zhou,Yuan Zhou,0,
+Daniel Zhou,Wanqi Zhu,0,
+Yuan Zhou,Wanqi Zhu,0,
 
 # Semifinals
 Group A 1st,Group B 2nd,0,
@@ -42,21 +37,20 @@ SF1 Winner,SF2 Winner,0,`;
 
 // Tournament data
 const groupA = [
+    "Jeremiah Donley",
     "Guanyu Song",
-    "Evan Tan", 
-    "Eric Yoder",
-    "Edward Zhang",
-    "Daniel Zhou",
-    "Wanqi Zhu"
+    "Evan Tan",
+    "Michael Xu",
+    "Edward Zhang"
 ];
 
 const groupB = [
-    "Jeremiah Donley",
     "Qiyou Wu",
-    "Michael Xu", 
-    "Aaron Ye",
+    "Eric Yoder",
     "Henry Zhang",
-    "Yuan Zhou"
+    "Daniel Zhou",
+    "Yuan Zhou",
+    "Wanqi Zhu"
 ];
 
 // Static results - populated from CSV data
@@ -81,8 +75,43 @@ let gameLinks = {
     knockout: {}
 };
 
-// Generate round robin matches for a group
+// Generate round robin matches for a group in the order specified by CSV
 function generateRoundRobinMatches(players) {
+    // Define match order based on CSV data structure
+    if (players.length === 5) { // Group A
+        return [
+            { player1: "Guanyu Song", player2: "Edward Zhang", id: "0-1" },
+            { player1: "Evan Tan", player2: "Michael Xu", id: "1-2" },
+            { player1: "Jeremiah Donley", player2: "Guanyu Song", id: "2-3" },
+            { player1: "Jeremiah Donley", player2: "Evan Tan", id: "3-4" },
+            { player1: "Jeremiah Donley", player2: "Michael Xu", id: "4-5" },
+            { player1: "Jeremiah Donley", player2: "Edward Zhang", id: "5-6" },
+            { player1: "Guanyu Song", player2: "Evan Tan", id: "6-7" },
+            { player1: "Guanyu Song", player2: "Michael Xu", id: "7-8" },
+            { player1: "Evan Tan", player2: "Edward Zhang", id: "8-9" },
+            { player1: "Michael Xu", player2: "Edward Zhang", id: "9-10" }
+        ];
+    } else if (players.length === 6) { // Group B
+        return [
+            { player1: "Eric Yoder", player2: "Yuan Zhou", id: "0-1" },
+            { player1: "Henry Zhang", player2: "Daniel Zhou", id: "1-2" },
+            { player1: "Qiyou Wu", player2: "Eric Yoder", id: "2-3" },
+            { player1: "Qiyou Wu", player2: "Henry Zhang", id: "3-4" },
+            { player1: "Qiyou Wu", player2: "Daniel Zhou", id: "4-5" },
+            { player1: "Qiyou Wu", player2: "Yuan Zhou", id: "5-6" },
+            { player1: "Qiyou Wu", player2: "Wanqi Zhu", id: "6-7" },
+            { player1: "Eric Yoder", player2: "Henry Zhang", id: "7-8" },
+            { player1: "Eric Yoder", player2: "Daniel Zhou", id: "8-9" },
+            { player1: "Eric Yoder", player2: "Wanqi Zhu", id: "9-10" },
+            { player1: "Henry Zhang", player2: "Yuan Zhou", id: "10-11" },
+            { player1: "Henry Zhang", player2: "Wanqi Zhu", id: "11-12" },
+            { player1: "Daniel Zhou", player2: "Yuan Zhou", id: "12-13" },
+            { player1: "Daniel Zhou", player2: "Wanqi Zhu", id: "13-14" },
+            { player1: "Yuan Zhou", player2: "Wanqi Zhu", id: "14-15" }
+        ];
+    }
+    
+    // Fallback to original logic for other group sizes
     const matches = [];
     for (let i = 0; i < players.length; i++) {
         for (let j = i + 1; j < players.length; j++) {
@@ -102,13 +131,16 @@ function createMatchElement(match, groupName) {
     const hasResult = results[`group${groupName.toUpperCase()}`] && results[`group${groupName.toUpperCase()}`][match.id];
     const gameLink = gameLinks[`group${groupName.toUpperCase()}`] && gameLinks[`group${groupName.toUpperCase()}`][match.id];
     
+    // Use different vs label for games in progress (have link but no result)
+    const vsLabel = (gameLink && !hasResult) ? '🔄' : 'vs';
+    
     const matchContent = `
         <div class="match-players">
             <div class="player-button results-only" id="${matchId}-player1">
                 <span class="player-name">${match.player1}</span>
                 <span class="checkmark">✓</span>
             </div>
-            <span class="vs-label">vs</span>
+            <span class="vs-label">${vsLabel}</span>
             <div class="player-button results-only" id="${matchId}-player2">
                 <span class="player-name">${match.player2}</span>
                 <span class="checkmark">✓</span>
@@ -116,7 +148,8 @@ function createMatchElement(match, groupName) {
         </div>
     `;
     
-    if (hasResult && gameLink) {
+    // Make game clickable if it has a link, regardless of whether it has a result
+    if (gameLink) {
         return `
             <div class="match match-with-link" id="match-${matchId}">
                 <a href="${gameLink}" target="_blank" class="match-link">
@@ -208,7 +241,8 @@ function calculateGroupStanding(players, groupResults, matches) {
 
 // Determine qualifiers - simplified for results display
 function determineQualifiers(standings, groupLetter) {
-    const totalMatches = 15;
+    const numPlayers = standings.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
     
     if (predictedMatches < totalMatches) {
@@ -301,27 +335,27 @@ function updateKnockoutMatch(matchKey, matchElementId) {
                 finalSf2.classList.add('selected');
             }
         }
+    }
+    
+    // Add game link if available, regardless of whether there's a result
+    if (gameLink) {
+        matchElement.classList.add('match-with-link');
         
-        // Add game link if available
-        if (gameLink) {
-            matchElement.classList.add('match-with-link');
+        // Check if link indicator already exists
+        if (!matchElement.querySelector('.game-link-indicator')) {
+            const linkIndicator = document.createElement('div');
+            linkIndicator.className = 'game-link-indicator';
+            linkIndicator.innerHTML = '🔗 View Game';
             
-            // Check if link indicator already exists
-            if (!matchElement.querySelector('.game-link-indicator')) {
-                const linkIndicator = document.createElement('div');
-                linkIndicator.className = 'game-link-indicator';
-                linkIndicator.innerHTML = '🔗 View Game';
-                
-                const linkWrapper = document.createElement('a');
-                linkWrapper.href = gameLink;
-                linkWrapper.target = '_blank';
-                linkWrapper.className = 'knockout-match-link';
-                
-                // Wrap the existing content
-                const existingContent = matchElement.innerHTML;
-                linkWrapper.innerHTML = existingContent + linkIndicator.outerHTML;
-                matchElement.innerHTML = linkWrapper.outerHTML;
-            }
+            const linkWrapper = document.createElement('a');
+            linkWrapper.href = gameLink;
+            linkWrapper.target = '_blank';
+            linkWrapper.className = 'knockout-match-link';
+            
+            // Wrap the existing content
+            const existingContent = matchElement.innerHTML;
+            linkWrapper.innerHTML = existingContent + linkIndicator.outerHTML;
+            matchElement.innerHTML = linkWrapper.outerHTML;
         }
     }
 }
@@ -380,8 +414,9 @@ function updateGroupStandingsTable(groupLetter, players, groupResults) {
     
     let html = '';
     
-    // Check if all group matches have been played (15 total matches per group)
-    const totalMatches = 15;
+    // Check if all group matches have been played
+    const numPlayers = players.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const playedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2; // Divide by 2 since each match counts for 2 players
     const groupComplete = playedMatches === totalMatches;
     

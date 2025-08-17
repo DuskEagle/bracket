@@ -1,20 +1,19 @@
 // Tournament data
 const groupA = [
+    "Jeremiah Donley",
     "Guanyu Song",
-    "Evan Tan", 
-    "Eric Yoder",
-    "Edward Zhang",
-    "Daniel Zhou",
-    "Wanqi Zhu"
+    "Evan Tan",
+    "Michael Xu",
+    "Edward Zhang"
 ];
 
 const groupB = [
-    "Jeremiah Donley",
     "Qiyou Wu",
-    "Michael Xu", 
-    "Aaron Ye",
+    "Eric Yoder",
     "Henry Zhang",
-    "Yuan Zhou"
+    "Daniel Zhou",
+    "Yuan Zhou",
+    "Wanqi Zhu"
 ];
 
 // Store predictions and qualifiers
@@ -161,7 +160,8 @@ function calculateGroupStanding(players, groupPredictions, matches) {
 // Determine qualifiers with tie-breaking logic
 function determineQualifiers(standings, groupLetter) {
     // Check if we have enough matches predicted
-    const totalMatches = 15; // 6 choose 2 = 15 matches per group
+    const numPlayers = standings.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
     
     if (predictedMatches < totalMatches) {
@@ -421,7 +421,8 @@ function updateGroupTiebreakers(groupLetter, players) {
         generateRoundRobinMatches(players)
     );
     
-    const totalMatches = 15;
+    const numPlayers = players.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
     
     if (predictedMatches < totalMatches) return;
@@ -592,8 +593,9 @@ function updateGroupStandingsTable(groupLetter, players, groupPredictions) {
     
     let html = '';
     
-    // Check if all group matches have been played (15 total matches per group)
-    const totalMatches = 15;
+    // Check if all group matches have been played
+    const numPlayers = players.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const playedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2; // Divide by 2 since each match counts for 2 players
     const groupComplete = playedMatches === totalMatches;
     
@@ -617,7 +619,8 @@ function updateGroupStandingsTable(groupLetter, players, groupPredictions) {
 // Apply tiebreaker selections to standings order
 function applyTiebreakersToStandings(standings, groupLetter) {
     // Check if we have enough matches predicted
-    const totalMatches = 15;
+    const numPlayers = standings.length;
+    const totalMatches = numPlayers * (numPlayers - 1) / 2; // n choose 2
     const predictedMatches = standings.reduce((sum, player) => sum + player.played, 0) / 2;
     
     if (predictedMatches < totalMatches) {

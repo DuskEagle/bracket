@@ -253,7 +253,7 @@ h3 {
 
 .round h3 {
     text-align: center;
-    background: #f39c12;
+    background: #3498db;
     color: white;
     padding: 6px;
     margin: -12px -12px 8px -12px;
@@ -262,15 +262,15 @@ h3 {
 }
 
 .final h3 {
-    background: #e74c3c;
+    background: #3498db;
 }
 
 .semifinals .match {
-    border-left: 3px solid #f39c12;
+    border-left: 3px solid #3498db;
 }
 
 .final .match {
-    border-left: 3px solid #e74c3c;
+    border-left: 3px solid #3498db;
 }
 
 .round .match-info {
@@ -317,7 +317,7 @@ h3 {
 }
 
 .standings-table:last-child h3 {
-    background: #9b59b6;
+    background: #3498db;
 }
 
 .standings-table table {
