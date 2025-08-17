@@ -2,8 +2,8 @@
 const csvData = `# Group A
 Guanyu Song,Edward Zhang,1,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,2,https://online-go.com/review/1521373
-Jeremiah Donley,Edward Zhang,0,
-Guanyu Song,Evan Tan,0,
+Jeremiah Donley,Edward Zhang,0,https://online-go.com/review/1521522
+Guanyu Song,Evan Tan,0,https://online-go.com/review/1521517
 Jeremiah Donley,Michael Xu,0,
 Evan Tan,Edward Zhang,0,
 Jeremiah Donley,Evan Tan,0,
@@ -15,9 +15,9 @@ Michael Xu,Edward Zhang,0,
 Qiyou Wu,Wanqi Zhu,1,https://online-go.com/review/1521383
 Eric Yoder,Yuan Zhou,2,https://online-go.com/review/1521374
 Henry Zhang,Daniel Zhou,2,https://online-go.com/review/1521379
-Qiyou Wu,Yuan Zhou,0,
-Daniel Zhou,Wanqi Zhu,0,
-Eric Yoder,Henry Zhang,0,
+Qiyou Wu,Yuan Zhou,0,https://online-go.com/review/1521516
+Daniel Zhou,Wanqi Zhu,0,https://online-go.com/review/1521520
+Eric Yoder,Henry Zhang,0,https://online-go.com/review/1521521
 Qiyou Wu,Daniel Zhou,0,
 Henry Zhang,Yuan Zhou,0,
 Eric Yoder,Wanqi Zhu,0,
