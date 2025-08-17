@@ -3,7 +3,7 @@ const csvData = `# Group A
 Guanyu Song,Edward Zhang,1,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,2,https://online-go.com/review/1521373
 Jeremiah Donley,Edward Zhang,0,https://online-go.com/review/1521522
-Guanyu Song,Evan Tan,0,https://online-go.com/review/1521517
+Guanyu Song,Evan Tan,1,https://online-go.com/review/1521517
 Jeremiah Donley,Michael Xu,0,
 Evan Tan,Edward Zhang,0,
 Jeremiah Donley,Evan Tan,0,
