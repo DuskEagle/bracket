@@ -14,7 +14,7 @@ Michael Xu,Edward Zhang,0,
 # Group B
 Qiyou Wu,Wanqi Zhu,1,https://online-go.com/review/1521383
 Eric Yoder,Yuan Zhou,0,https://online-go.com/review/1521374
-Henry Zhang,Daniel Zhou,0,https://online-go.com/review/1521379
+Henry Zhang,Daniel Zhou,2,https://online-go.com/review/1521379
 Qiyou Wu,Yuan Zhou,0,
 Daniel Zhou,Wanqi Zhu,0,
 Eric Yoder,Henry Zhang,0,
