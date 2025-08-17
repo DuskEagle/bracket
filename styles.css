@@ -646,6 +646,36 @@ select:disabled {
     border-radius: 4px;
 }
 
+/* Round grouping - subtle visual distinction */
+.round-group {
+    margin-bottom: 8px;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.round-group:last-child {
+    margin-bottom: 0;
+}
+
+.round-group.round-odd {
+    background: rgba(52, 152, 219, 0.03);
+    border-left: 2px solid rgba(52, 152, 219, 0.2);
+}
+
+.round-group.round-even {
+    background: rgba(52, 152, 219, 0.03);
+    border-left: 2px solid rgba(52, 152, 219, 0.2);
+}
+
+.round-group .match {
+    margin-bottom: 4px;
+}
+
+.round-group .match:last-child {
+    margin-bottom: 0;
+}
+
 /* Disclaimer styling */
 .disclaimer {
     text-align: center;

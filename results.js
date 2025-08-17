@@ -2,31 +2,31 @@
 const csvData = `# Group A
 Guanyu Song,Edward Zhang,0,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,0,https://online-go.com/review/1521373
-Jeremiah Donley,Guanyu Song,0,
-Jeremiah Donley,Evan Tan,0,
-Jeremiah Donley,Michael Xu,0,
 Jeremiah Donley,Edward Zhang,0,
 Guanyu Song,Evan Tan,0,
-Guanyu Song,Michael Xu,0,
+Jeremiah Donley,Michael Xu,0,
 Evan Tan,Edward Zhang,0,
+Jeremiah Donley,Evan Tan,0,
+Guanyu Song,Michael Xu,0,
+Jeremiah Donley,Guanyu Song,0,
 Michael Xu,Edward Zhang,0,
 
 # Group B
+Qiyou Wu,Wanqi Zhu,0,https://online-go.com/review/1521383
 Eric Yoder,Yuan Zhou,0,https://online-go.com/review/1521374
 Henry Zhang,Daniel Zhou,0,https://online-go.com/review/1521379
-Qiyou Wu,Wanqi Zhu,0,https://online-go.com/review/1521383
-Qiyou Wu,Eric Yoder,0,
-Qiyou Wu,Henry Zhang,0,
-Qiyou Wu,Daniel Zhou,0,
 Qiyou Wu,Yuan Zhou,0,
+Daniel Zhou,Wanqi Zhu,0,
 Eric Yoder,Henry Zhang,0,
-Eric Yoder,Daniel Zhou,0,
-Eric Yoder,Wanqi Zhu,0,
+Qiyou Wu,Daniel Zhou,0,
 Henry Zhang,Yuan Zhou,0,
+Eric Yoder,Wanqi Zhu,0,
+Qiyou Wu,Henry Zhang,0,
+Eric Yoder,Daniel Zhou,0,
+Yuan Zhou,Wanqi Zhu,0,
+Qiyou Wu,Eric Yoder,0,
 Henry Zhang,Wanqi Zhu,0,
 Daniel Zhou,Yuan Zhou,0,
-Daniel Zhou,Wanqi Zhu,0,
-Yuan Zhou,Wanqi Zhu,0,
 
 # Semifinals
 Group A 1st,Group B 2nd,0,
@@ -78,36 +78,46 @@ let gameLinks = {
 // Generate round robin matches for a group in the order specified by CSV
 function generateRoundRobinMatches(players) {
     // Define match order based on CSV data structure
-    if (players.length === 5) { // Group A
+    if (players.length === 5) { // Group A - 2 games per round
         return [
-            { player1: "Guanyu Song", player2: "Edward Zhang", id: "0-1" },
-            { player1: "Evan Tan", player2: "Michael Xu", id: "1-2" },
-            { player1: "Jeremiah Donley", player2: "Guanyu Song", id: "2-3" },
-            { player1: "Jeremiah Donley", player2: "Evan Tan", id: "3-4" },
-            { player1: "Jeremiah Donley", player2: "Michael Xu", id: "4-5" },
-            { player1: "Jeremiah Donley", player2: "Edward Zhang", id: "5-6" },
-            { player1: "Guanyu Song", player2: "Evan Tan", id: "6-7" },
-            { player1: "Guanyu Song", player2: "Michael Xu", id: "7-8" },
-            { player1: "Evan Tan", player2: "Edward Zhang", id: "8-9" },
-            { player1: "Michael Xu", player2: "Edward Zhang", id: "9-10" }
+            // Round 1
+            { player1: "Guanyu Song", player2: "Edward Zhang", id: "0-1", round: 1 },
+            { player1: "Evan Tan", player2: "Michael Xu", id: "1-2", round: 1 },
+            // Round 2
+            { player1: "Jeremiah Donley", player2: "Edward Zhang", id: "2-3", round: 2 },
+            { player1: "Guanyu Song", player2: "Evan Tan", id: "3-4", round: 2 },
+            // Round 3
+            { player1: "Jeremiah Donley", player2: "Michael Xu", id: "4-5", round: 3 },
+            { player1: "Evan Tan", player2: "Edward Zhang", id: "5-6", round: 3 },
+            // Round 4
+            { player1: "Jeremiah Donley", player2: "Evan Tan", id: "6-7", round: 4 },
+            { player1: "Guanyu Song", player2: "Michael Xu", id: "7-8", round: 4 },
+            // Round 5
+            { player1: "Jeremiah Donley", player2: "Guanyu Song", id: "8-9", round: 5 },
+            { player1: "Michael Xu", player2: "Edward Zhang", id: "9-10", round: 5 }
         ];
-    } else if (players.length === 6) { // Group B
+    } else if (players.length === 6) { // Group B - 3 games per round
         return [
-            { player1: "Eric Yoder", player2: "Yuan Zhou", id: "0-1" },
-            { player1: "Henry Zhang", player2: "Daniel Zhou", id: "1-2" },
-            { player1: "Qiyou Wu", player2: "Eric Yoder", id: "2-3" },
-            { player1: "Qiyou Wu", player2: "Henry Zhang", id: "3-4" },
-            { player1: "Qiyou Wu", player2: "Daniel Zhou", id: "4-5" },
-            { player1: "Qiyou Wu", player2: "Yuan Zhou", id: "5-6" },
-            { player1: "Qiyou Wu", player2: "Wanqi Zhu", id: "6-7" },
-            { player1: "Eric Yoder", player2: "Henry Zhang", id: "7-8" },
-            { player1: "Eric Yoder", player2: "Daniel Zhou", id: "8-9" },
-            { player1: "Eric Yoder", player2: "Wanqi Zhu", id: "9-10" },
-            { player1: "Henry Zhang", player2: "Yuan Zhou", id: "10-11" },
-            { player1: "Henry Zhang", player2: "Wanqi Zhu", id: "11-12" },
-            { player1: "Daniel Zhou", player2: "Yuan Zhou", id: "12-13" },
-            { player1: "Daniel Zhou", player2: "Wanqi Zhu", id: "13-14" },
-            { player1: "Yuan Zhou", player2: "Wanqi Zhu", id: "14-15" }
+            // Round 1
+            { player1: "Qiyou Wu", player2: "Wanqi Zhu", id: "0-1", round: 1 },
+            { player1: "Eric Yoder", player2: "Yuan Zhou", id: "1-2", round: 1 },
+            { player1: "Henry Zhang", player2: "Daniel Zhou", id: "2-3", round: 1 },
+            // Round 2
+            { player1: "Qiyou Wu", player2: "Yuan Zhou", id: "3-4", round: 2 },
+            { player1: "Daniel Zhou", player2: "Wanqi Zhu", id: "4-5", round: 2 },
+            { player1: "Eric Yoder", player2: "Henry Zhang", id: "5-6", round: 2 },
+            // Round 3
+            { player1: "Qiyou Wu", player2: "Daniel Zhou", id: "6-7", round: 3 },
+            { player1: "Henry Zhang", player2: "Yuan Zhou", id: "7-8", round: 3 },
+            { player1: "Eric Yoder", player2: "Wanqi Zhu", id: "8-9", round: 3 },
+            // Round 4
+            { player1: "Qiyou Wu", player2: "Henry Zhang", id: "9-10", round: 4 },
+            { player1: "Eric Yoder", player2: "Daniel Zhou", id: "10-11", round: 4 },
+            { player1: "Yuan Zhou", player2: "Wanqi Zhu", id: "11-12", round: 4 },
+            // Round 5
+            { player1: "Qiyou Wu", player2: "Eric Yoder", id: "12-13", round: 5 },
+            { player1: "Henry Zhang", player2: "Wanqi Zhu", id: "13-14", round: 5 },
+            { player1: "Daniel Zhou", player2: "Yuan Zhou", id: "14-15", round: 5 }
         ];
     }
     
@@ -399,6 +409,35 @@ function getSemifinalWinner(semifinal) {
     }
 }
 
+// Create HTML for matches grouped by rounds
+function createRoundedMatchesHTML(matches, groupName) {
+    const rounds = {};
+    
+    // Group matches by round
+    matches.forEach(match => {
+        const round = match.round || 1;
+        if (!rounds[round]) {
+            rounds[round] = [];
+        }
+        rounds[round].push(match);
+    });
+    
+    // Create HTML for each round
+    let html = '';
+    Object.keys(rounds).sort((a, b) => parseInt(a) - parseInt(b)).forEach(roundNum => {
+        const roundMatches = rounds[roundNum];
+        const roundClass = parseInt(roundNum) % 2 === 1 ? 'round-odd' : 'round-even';
+        
+        html += `<div class="round-group ${roundClass}">`;
+        roundMatches.forEach(match => {
+            html += createMatchElement(match, groupName);
+        });
+        html += '</div>';
+    });
+    
+    return html;
+}
+
 // Update group standings tables
 function updateStandings() {
     updateGroupStandingsTable('A', groupA, results.groupA);
@@ -442,18 +481,18 @@ function initializeTournament() {
     // Load results from embedded CSV data
     loadResults();
     
-    // Generate Group A matches
+    // Generate Group A matches with rounds
     const groupAMatches = generateRoundRobinMatches(groupA);
     const groupAContainer = document.getElementById('group-a-matches');
     if (groupAContainer) {
-        groupAContainer.innerHTML = groupAMatches.map(match => createMatchElement(match, 'a')).join('');
+        groupAContainer.innerHTML = createRoundedMatchesHTML(groupAMatches, 'a');
     }
     
-    // Generate Group B matches
+    // Generate Group B matches with rounds
     const groupBMatches = generateRoundRobinMatches(groupB);
     const groupBContainer = document.getElementById('group-b-matches');
     if (groupBContainer) {
-        groupBContainer.innerHTML = groupBMatches.map(match => createMatchElement(match, 'b')).join('');
+        groupBContainer.innerHTML = createRoundedMatchesHTML(groupBMatches, 'b');
     }
     
     // Initialize displays
