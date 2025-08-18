@@ -19,7 +19,7 @@ Qiyou Wu,Yuan Zhou,1,https://online-go.com/review/1521516
 Daniel Zhou,Wanqi Zhu,1,https://online-go.com/review/1521520
 Eric Yoder,Henry Zhang,1,https://online-go.com/review/1521521
 Qiyou Wu,Daniel Zhou,1,https://online-go.com/review/1521957
-Henry Zhang,Yuan Zhou,0,https://online-go.com/review/1521958
+Henry Zhang,Yuan Zhou,2,https://online-go.com/review/1521958
 Eric Yoder,Wanqi Zhu,1,https://online-go.com/review/1521959
 Qiyou Wu,Henry Zhang,0,
 Eric Yoder,Daniel Zhou,0,
