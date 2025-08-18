@@ -4,7 +4,7 @@ Guanyu Song,Edward Zhang,1,https://online-go.com/review/1521372
 Evan Tan,Michael Xu,2,https://online-go.com/review/1521373
 Jeremiah Donley,Edward Zhang,2,https://online-go.com/review/1521522
 Guanyu Song,Evan Tan,1,https://online-go.com/review/1521517
-Jeremiah Donley,Michael Xu,0,https://online-go.com/review/1521955
+Jeremiah Donley,Michael Xu,2,https://online-go.com/review/1521955
 Evan Tan,Edward Zhang,0,https://online-go.com/review/1521956
 Jeremiah Donley,Evan Tan,0,
 Guanyu Song,Michael Xu,0,
