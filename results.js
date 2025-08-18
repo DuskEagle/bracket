@@ -5,7 +5,7 @@ Evan Tan,Michael Xu,2,https://online-go.com/review/1521373
 Jeremiah Donley,Edward Zhang,2,https://online-go.com/review/1521522
 Guanyu Song,Evan Tan,1,https://online-go.com/review/1521517
 Jeremiah Donley,Michael Xu,2,https://online-go.com/review/1521955
-Evan Tan,Edward Zhang,0,https://online-go.com/review/1521956
+Evan Tan,Edward Zhang,1,https://online-go.com/review/1521956
 Jeremiah Donley,Evan Tan,0,
 Guanyu Song,Michael Xu,0,
 Jeremiah Donley,Guanyu Song,0,
@@ -18,9 +18,9 @@ Henry Zhang,Daniel Zhou,2,https://online-go.com/review/1521379
 Qiyou Wu,Yuan Zhou,1,https://online-go.com/review/1521516
 Daniel Zhou,Wanqi Zhu,1,https://online-go.com/review/1521520
 Eric Yoder,Henry Zhang,1,https://online-go.com/review/1521521
-Qiyou Wu,Daniel Zhou,0,https://online-go.com/review/1521957
+Qiyou Wu,Daniel Zhou,1,https://online-go.com/review/1521957
 Henry Zhang,Yuan Zhou,0,https://online-go.com/review/1521958
-Eric Yoder,Wanqi Zhu,0,https://online-go.com/review/1521959
+Eric Yoder,Wanqi Zhu,1,https://online-go.com/review/1521959
 Qiyou Wu,Henry Zhang,0,
 Eric Yoder,Daniel Zhou,0,
 Yuan Zhou,Wanqi Zhu,0,
