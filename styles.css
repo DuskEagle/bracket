@@ -676,6 +676,19 @@ select:disabled {
     margin-bottom: 0;
 }
 
+/* Tiebreak game styling */
+.tiebreak-label {
+    background: #fffef7;
+    color: #8b7355;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border: 1px solid #f5f2e8;
+}
+
 /* Disclaimer styling */
 .disclaimer {
     text-align: center;

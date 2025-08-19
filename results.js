@@ -81,43 +81,43 @@ function generateRoundRobinMatches(players) {
     if (players.length === 5) { // Group A - 2 games per round
         return [
             // Round 1
-            { player1: "Guanyu Song", player2: "Edward Zhang", id: "0-1", round: 1 },
-            { player1: "Evan Tan", player2: "Michael Xu", id: "1-2", round: 1 },
+            { player1: "Guanyu Song", player2: "Edward Zhang", id: "0-1", round: 1, isTiebreak: false },
+            { player1: "Evan Tan", player2: "Michael Xu", id: "1-2", round: 1, isTiebreak: false },
             // Round 2
-            { player1: "Jeremiah Donley", player2: "Edward Zhang", id: "2-3", round: 2 },
-            { player1: "Guanyu Song", player2: "Evan Tan", id: "3-4", round: 2 },
+            { player1: "Jeremiah Donley", player2: "Edward Zhang", id: "2-3", round: 2, isTiebreak: false },
+            { player1: "Guanyu Song", player2: "Evan Tan", id: "3-4", round: 2, isTiebreak: false },
             // Round 3
-            { player1: "Jeremiah Donley", player2: "Michael Xu", id: "4-5", round: 3 },
-            { player1: "Evan Tan", player2: "Edward Zhang", id: "5-6", round: 3 },
+            { player1: "Jeremiah Donley", player2: "Michael Xu", id: "4-5", round: 3, isTiebreak: false },
+            { player1: "Evan Tan", player2: "Edward Zhang", id: "5-6", round: 3, isTiebreak: false },
             // Round 4
-            { player1: "Jeremiah Donley", player2: "Evan Tan", id: "6-7", round: 4 },
-            { player1: "Guanyu Song", player2: "Michael Xu", id: "7-8", round: 4 },
+            { player1: "Jeremiah Donley", player2: "Evan Tan", id: "6-7", round: 4, isTiebreak: false },
+            { player1: "Guanyu Song", player2: "Michael Xu", id: "7-8", round: 4, isTiebreak: false },
             // Round 5
-            { player1: "Jeremiah Donley", player2: "Guanyu Song", id: "8-9", round: 5 },
-            { player1: "Michael Xu", player2: "Edward Zhang", id: "9-10", round: 5 }
+            { player1: "Jeremiah Donley", player2: "Guanyu Song", id: "8-9", round: 5, isTiebreak: false },
+            { player1: "Michael Xu", player2: "Edward Zhang", id: "9-10", round: 5, isTiebreak: false }
         ];
     } else if (players.length === 6) { // Group B - 3 games per round
         return [
             // Round 1
-            { player1: "Qiyou Wu", player2: "Wanqi Zhu", id: "0-1", round: 1 },
-            { player1: "Eric Yoder", player2: "Yuan Zhou", id: "1-2", round: 1 },
-            { player1: "Henry Zhang", player2: "Daniel Zhou", id: "2-3", round: 1 },
+            { player1: "Qiyou Wu", player2: "Wanqi Zhu", id: "0-1", round: 1, isTiebreak: false },
+            { player1: "Eric Yoder", player2: "Yuan Zhou", id: "1-2", round: 1, isTiebreak: false },
+            { player1: "Henry Zhang", player2: "Daniel Zhou", id: "2-3", round: 1, isTiebreak: false },
             // Round 2
-            { player1: "Qiyou Wu", player2: "Yuan Zhou", id: "3-4", round: 2 },
-            { player1: "Daniel Zhou", player2: "Wanqi Zhu", id: "4-5", round: 2 },
-            { player1: "Eric Yoder", player2: "Henry Zhang", id: "5-6", round: 2 },
+            { player1: "Qiyou Wu", player2: "Yuan Zhou", id: "3-4", round: 2, isTiebreak: false },
+            { player1: "Daniel Zhou", player2: "Wanqi Zhu", id: "4-5", round: 2, isTiebreak: false },
+            { player1: "Eric Yoder", player2: "Henry Zhang", id: "5-6", round: 2, isTiebreak: false },
             // Round 3
-            { player1: "Qiyou Wu", player2: "Daniel Zhou", id: "6-7", round: 3 },
-            { player1: "Henry Zhang", player2: "Yuan Zhou", id: "7-8", round: 3 },
-            { player1: "Eric Yoder", player2: "Wanqi Zhu", id: "8-9", round: 3 },
+            { player1: "Qiyou Wu", player2: "Daniel Zhou", id: "6-7", round: 3, isTiebreak: false },
+            { player1: "Henry Zhang", player2: "Yuan Zhou", id: "7-8", round: 3, isTiebreak: false },
+            { player1: "Eric Yoder", player2: "Wanqi Zhu", id: "8-9", round: 3, isTiebreak: false },
             // Round 4
-            { player1: "Qiyou Wu", player2: "Henry Zhang", id: "9-10", round: 4 },
-            { player1: "Eric Yoder", player2: "Daniel Zhou", id: "10-11", round: 4 },
-            { player1: "Yuan Zhou", player2: "Wanqi Zhu", id: "11-12", round: 4 },
+            { player1: "Qiyou Wu", player2: "Henry Zhang", id: "9-10", round: 4, isTiebreak: false },
+            { player1: "Eric Yoder", player2: "Daniel Zhou", id: "10-11", round: 4, isTiebreak: false },
+            { player1: "Yuan Zhou", player2: "Wanqi Zhu", id: "11-12", round: 4, isTiebreak: false },
             // Round 5
-            { player1: "Qiyou Wu", player2: "Eric Yoder", id: "12-13", round: 5 },
-            { player1: "Henry Zhang", player2: "Wanqi Zhu", id: "13-14", round: 5 },
-            { player1: "Daniel Zhou", player2: "Yuan Zhou", id: "14-15", round: 5 }
+            { player1: "Qiyou Wu", player2: "Eric Yoder", id: "12-13", round: 5, isTiebreak: false },
+            { player1: "Henry Zhang", player2: "Wanqi Zhu", id: "13-14", round: 5, isTiebreak: false },
+            { player1: "Daniel Zhou", player2: "Yuan Zhou", id: "14-15", round: 5, isTiebreak: false }
         ];
     }
     
@@ -138,13 +138,25 @@ function generateRoundRobinMatches(players) {
 // Create match HTML for results (non-interactive)
 function createMatchElement(match, groupName) {
     const matchId = `${groupName}-${match.id}`;
-    const hasResult = results[`group${groupName.toUpperCase()}`] && results[`group${groupName.toUpperCase()}`][match.id];
-    const gameLink = gameLinks[`group${groupName.toUpperCase()}`] && gameLinks[`group${groupName.toUpperCase()}`][match.id];
+    
+    // Check for results in appropriate location (regular results or tiebreakers)
+    let hasResult, gameLink;
+    if (match.isTiebreak) {
+        hasResult = results.tiebreakers[`group${groupName.toUpperCase()}`] && results.tiebreakers[`group${groupName.toUpperCase()}`][match.id];
+        gameLink = gameLinks[`group${groupName.toUpperCase()}`] && gameLinks[`group${groupName.toUpperCase()}`][match.id];
+    } else {
+        hasResult = results[`group${groupName.toUpperCase()}`] && results[`group${groupName.toUpperCase()}`][match.id];
+        gameLink = gameLinks[`group${groupName.toUpperCase()}`] && gameLinks[`group${groupName.toUpperCase()}`][match.id];
+    }
     
     // Use different vs label for games in progress (have link but no result)
     const vsLabel = (gameLink && !hasResult) ? '🔄' : 'vs';
     
+    // Add tiebreak indicator
+    const tiebreakLabel = match.isTiebreak ? '<div class="tiebreak-label">Tiebreaks</div>' : '';
+    
     const matchContent = `
+        ${tiebreakLabel}
         <div class="match-players">
             <div class="player-button results-only" id="${matchId}-player1">
                 <span class="player-name">${match.player1}</span>
@@ -158,10 +170,13 @@ function createMatchElement(match, groupName) {
         </div>
     `;
     
+    // Add tiebreak class for styling
+    const matchClasses = match.isTiebreak ? 'match tiebreak-match' : 'match';
+    
     // Make game clickable if it has a link, regardless of whether it has a result
     if (gameLink) {
         return `
-            <div class="match match-with-link" id="match-${matchId}">
+            <div class="${matchClasses} match-with-link" id="match-${matchId}">
                 <a href="${gameLink}" target="_blank" class="match-link">
                     ${matchContent}
                     <div class="game-link-indicator">🔗 View Game</div>
@@ -170,7 +185,7 @@ function createMatchElement(match, groupName) {
         `;
     } else {
         return `
-            <div class="match" id="match-${matchId}">
+            <div class="${matchClasses}" id="match-${matchId}">
                 ${matchContent}
             </div>
         `;
@@ -412,17 +427,22 @@ function getSemifinalWinner(semifinal) {
 // Create HTML for matches grouped by rounds
 function createRoundedMatchesHTML(matches, groupName) {
     const rounds = {};
+    const tiebreakMatches = [];
     
-    // Group matches by round
+    // Group matches by round, separate tiebreaks
     matches.forEach(match => {
-        const round = match.round || 1;
-        if (!rounds[round]) {
-            rounds[round] = [];
+        if (match.isTiebreak) {
+            tiebreakMatches.push(match);
+        } else {
+            const round = match.round || 1;
+            if (!rounds[round]) {
+                rounds[round] = [];
+            }
+            rounds[round].push(match);
         }
-        rounds[round].push(match);
     });
     
-    // Create HTML for each round
+    // Create HTML for each regular round
     let html = '';
     Object.keys(rounds).sort((a, b) => parseInt(a) - parseInt(b)).forEach(roundNum => {
         const roundMatches = rounds[roundNum];
@@ -434,6 +454,13 @@ function createRoundedMatchesHTML(matches, groupName) {
         });
         html += '</div>';
     });
+    
+    // Add tiebreak games inline with regular rounds
+    if (tiebreakMatches.length > 0) {
+        tiebreakMatches.forEach(match => {
+            html += createMatchElement(match, groupName);
+        });
+    }
     
     return html;
 }
@@ -481,18 +508,19 @@ function initializeTournament() {
     // Load results from embedded CSV data
     loadResults();
     
-    // Generate Group A matches with rounds
-    const groupAMatches = generateRoundRobinMatches(groupA);
+    // Initialize global matches arrays if not already set
+    if (!window.groupAMatches) window.groupAMatches = generateRoundRobinMatches(groupA);
+    if (!window.groupBMatches) window.groupBMatches = generateRoundRobinMatches(groupB);
+    
+    // Use global matches arrays (populated by parseCSVResults)
     const groupAContainer = document.getElementById('group-a-matches');
     if (groupAContainer) {
-        groupAContainer.innerHTML = createRoundedMatchesHTML(groupAMatches, 'a');
+        groupAContainer.innerHTML = createRoundedMatchesHTML(window.groupAMatches, 'a');
     }
     
-    // Generate Group B matches with rounds
-    const groupBMatches = generateRoundRobinMatches(groupB);
     const groupBContainer = document.getElementById('group-b-matches');
     if (groupBContainer) {
-        groupBContainer.innerHTML = createRoundedMatchesHTML(groupBMatches, 'b');
+        groupBContainer.innerHTML = createRoundedMatchesHTML(window.groupBMatches, 'b');
     }
     
     // Initialize displays
@@ -514,8 +542,10 @@ function loadResults() {
 function parseCSVResults(csvText) {
     const lines = csvText.split('\n').map(line => line.trim());
     let currentSection = 'groupA'; // Start with Group A
-    let groupAMatches = generateRoundRobinMatches(groupA);
-    let groupBMatches = generateRoundRobinMatches(groupB);
+    window.groupAMatches = generateRoundRobinMatches(groupA);
+    window.groupBMatches = generateRoundRobinMatches(groupB);
+    const originalGroupALength = window.groupAMatches.length;
+    const originalGroupBLength = window.groupBMatches.length;
     let matchIndex = 0;
     
     for (const line of lines) {
@@ -550,8 +580,8 @@ function parseCSVResults(csvText) {
         const gameLink = parts[3] || '';
         
         if (currentSection === 'groupA') {
-            if (matchIndex < groupAMatches.length) {
-                const match = groupAMatches[matchIndex];
+            if (matchIndex < originalGroupALength) {
+                const match = window.groupAMatches[matchIndex];
                 
                 if (result === 1) {
                     results.groupA[match.id] = match.player1;
@@ -562,10 +592,33 @@ function parseCSVResults(csvText) {
                     gameLinks.groupA[match.id] = gameLink;
                 }
                 matchIndex++;
+            } else {
+                // This is a tiebreak game beyond the 5 regular rounds
+                const tiebreakId = `tb-${matchIndex - originalGroupALength}`;
+                const tiebreakMatch = {
+                    player1: player1,
+                    player2: player2,
+                    id: tiebreakId,
+                    round: 6, // Tiebreak round
+                    isTiebreak: true
+                };
+                
+                if (result === 1) {
+                    results.tiebreakers.groupA[tiebreakId] = player1;
+                } else if (result === 2) {
+                    results.tiebreakers.groupA[tiebreakId] = player2;
+                }
+                if (gameLink) {
+                    gameLinks.groupA[tiebreakId] = gameLink;
+                }
+                
+                // Add to the matches list for display
+                window.groupAMatches.push(tiebreakMatch);
+                matchIndex++;
             }
         } else if (currentSection === 'groupB') {
-            if (matchIndex < groupBMatches.length) {
-                const match = groupBMatches[matchIndex];
+            if (matchIndex < originalGroupBLength) {
+                const match = window.groupBMatches[matchIndex];
                 if (result === 1) {
                     results.groupB[match.id] = match.player1;
                 } else if (result === 2) {
@@ -574,6 +627,29 @@ function parseCSVResults(csvText) {
                 if (gameLink) {
                     gameLinks.groupB[match.id] = gameLink;
                 }
+                matchIndex++;
+            } else {
+                // This is a tiebreak game beyond the 5 regular rounds
+                const tiebreakId = `tb-${matchIndex - originalGroupBLength}`;
+                const tiebreakMatch = {
+                    player1: player1,
+                    player2: player2,
+                    id: tiebreakId,
+                    round: 6, // Tiebreak round
+                    isTiebreak: true
+                };
+                
+                if (result === 1) {
+                    results.tiebreakers.groupB[tiebreakId] = player1;
+                } else if (result === 2) {
+                    results.tiebreakers.groupB[tiebreakId] = player2;
+                }
+                if (gameLink) {
+                    gameLinks.groupB[tiebreakId] = gameLink;
+                }
+                
+                // Add to the matches list for display
+                window.groupBMatches.push(tiebreakMatch);
                 matchIndex++;
             }
         } else if (currentSection === 'semifinals') {
@@ -615,6 +691,17 @@ function updateGroupVisualSelections(groupName, groupResults) {
             updateMatchVisuals(`${groupName}-${matchId}`, winner);
         }
     });
+    
+    // Also update tiebreak game visuals
+    const tiebreakResults = results.tiebreakers[`group${groupName.toUpperCase()}`];
+    if (tiebreakResults) {
+        Object.keys(tiebreakResults).forEach(matchId => {
+            const winner = tiebreakResults[matchId];
+            if (winner) {
+                updateMatchVisuals(`${groupName}-${matchId}`, winner);
+            }
+        });
+    }
 }
 
 // Initialization is now handled by the HTML page after script loads
