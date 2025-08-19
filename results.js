@@ -57,7 +57,11 @@ const groupB = [
 let results = {
     groupA: {},
     groupB: {},
-    knockout: {},
+    knockout: {
+        sf1: { games: [], winner: null },
+        sf2: { games: [], winner: null },
+        final: { games: [], winner: null }
+    },
     tiebreakers: {
         groupA: {},
         groupB: {}
@@ -72,7 +76,11 @@ let results = {
 let gameLinks = {
     groupA: {},
     groupB: {},
-    knockout: {}
+    knockout: {
+        sf1: [],
+        sf2: [],
+        final: []
+    }
 };
 
 // Generate round robin matches for a group in the order specified by CSV
@@ -336,65 +344,126 @@ function updateKnockoutVisuals() {
     updateKnockoutMatch('final', 'final-match');
 }
 
-// Update individual knockout match with link if game exists
+// Create best-of-3 match HTML
+function createBestOf3MatchHTML(matchKey, player1Name, player2Name, player1Id, player2Id) {
+    const matchData = results.knockout[matchKey];
+    const matchGameLinks = gameLinks.knockout[matchKey] || [];
+    const games = matchData.games;
+    const winner = matchData.winner;
+    
+    // Calculate how many games to show
+    let gamesToShow = 1; // Always show at least game 1
+    if (games.length > 0) {
+        gamesToShow = Math.min(games.length + 1, 3); // Show completed games + 1 next game
+        if (winner) {
+            gamesToShow = games.length; // If series is over, only show completed games
+        }
+    }
+    
+    // Generate individual game elements
+    let gamesHTML = '';
+    for (let i = 0; i < gamesToShow; i++) {
+        const gameNum = i + 1;
+        const gameResult = games[i];
+        const gameLink = matchGameLinks[i];
+        const hasResult = gameResult !== undefined;
+        
+        // Determine visual state
+        let player1Class = 'player-button results-only';
+        let player2Class = 'player-button results-only';
+        
+        if (hasResult) {
+            if (gameResult === 'player1') {
+                player1Class += ' selected';
+            } else if (gameResult === 'player2') {
+                player2Class += ' selected';
+            }
+        }
+        
+        // Create clickable game element
+        const gameContent = `
+            <div class="best-of-3-game" id="${matchKey}-game-${gameNum}">
+                <div class="game-header">Game ${gameNum}</div>
+                <div class="match-players">
+                    <div class="${player1Class}" id="${matchKey}-${player1Id}-game-${gameNum}">
+                        <span class="player-name">${player1Name}</span>
+                        <span class="checkmark">✓</span>
+                    </div>
+                    <span class="vs-label">${hasResult ? (gameResult ? '✓' : 'vs') : 'vs'}</span>
+                    <div class="${player2Class}" id="${matchKey}-${player2Id}-game-${gameNum}">
+                        <span class="player-name">${player2Name}</span>
+                        <span class="checkmark">✓</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        if (gameLink) {
+            gamesHTML += `
+                <a href="${gameLink}" target="_blank" class="game-link">
+                    ${gameContent}
+                </a>
+            `;
+        } else {
+            gamesHTML += gameContent;
+        }
+    }
+    
+    // Add series score indicator
+    const player1Wins = games.filter(g => g === 'player1').length;
+    const player2Wins = games.filter(g => g === 'player2').length;
+    const scoreHTML = games.length > 0 ? `
+        <div class="series-score">
+            <span class="${player1Wins >= 2 ? 'series-winner' : ''}">${player1Name}: ${player1Wins}</span>
+            <span class="score-separator">-</span>
+            <span class="${player2Wins >= 2 ? 'series-winner' : ''}">${player2Name}: ${player2Wins}</span>
+        </div>
+    ` : '';
+    
+    return scoreHTML + gamesHTML;
+}
+
+// Update individual knockout match with best-of-3 display
 function updateKnockoutMatch(matchKey, matchElementId) {
     const matchElement = document.getElementById(matchElementId);
     if (!matchElement) return;
     
-    const hasResult = results.knockout[matchKey];
-    const gameLink = gameLinks.knockout[matchKey];
+    // Find the existing match-players div and replace with best-of-3 display
+    const existingMatchPlayers = matchElement.querySelector('.match-players');
+    if (!existingMatchPlayers) return;
     
-    if (hasResult) {
-        // Update visual selection
-        if (matchKey === 'sf1') {
-            const sf1A1 = document.getElementById('sf1-a1');
-            const sf1B2 = document.getElementById('sf1-b2');
-            
-            if (results.knockout.sf1 === 'a1' && sf1A1) {
-                sf1A1.classList.add('selected');
-            } else if (sf1B2) {
-                sf1B2.classList.add('selected');
-            }
-        } else if (matchKey === 'sf2') {
-            const sf2B1 = document.getElementById('sf2-b1');
-            const sf2A2 = document.getElementById('sf2-a2');
-            
-            if (results.knockout.sf2 === 'b1' && sf2B1) {
-                sf2B1.classList.add('selected');
-            } else if (sf2A2) {
-                sf2A2.classList.add('selected');
-            }
-        } else if (matchKey === 'final') {
-            const finalSf1 = document.getElementById('final-sf1');
-            const finalSf2 = document.getElementById('final-sf2');
-            
-            if (results.knockout.final === 'sf1' && finalSf1) {
-                finalSf1.classList.add('selected');
-            } else if (finalSf2) {
-                finalSf2.classList.add('selected');
-            }
-        }
+    let player1Name, player2Name, player1Id, player2Id;
+    
+    if (matchKey === 'sf1') {
+        player1Name = results.qualifiedA1;
+        player2Name = results.qualifiedB2;
+        player1Id = 'a1';
+        player2Id = 'b2';
+    } else if (matchKey === 'sf2') {
+        player1Name = results.qualifiedB1;
+        player2Name = results.qualifiedA2;
+        player1Id = 'b1';
+        player2Id = 'a2';
+    } else if (matchKey === 'final') {
+        player1Name = getSemifinalWinner('sf1');
+        player2Name = getSemifinalWinner('sf2');
+        player1Id = 'sf1';
+        player2Id = 'sf2';
     }
     
-    // Add game link if available, regardless of whether there's a result
-    if (gameLink) {
-        matchElement.classList.add('match-with-link');
-        
-        // Check if link indicator already exists
-        if (!matchElement.querySelector('.game-link-indicator')) {
-            const linkIndicator = document.createElement('div');
-            linkIndicator.className = 'game-link-indicator';
-            linkIndicator.innerHTML = '🔗 View Game';
-            
-            const linkWrapper = document.createElement('a');
-            linkWrapper.href = gameLink;
-            linkWrapper.target = '_blank';
-            linkWrapper.className = 'knockout-match-link';
-            
-            // Wrap the existing content
-            const existingContent = matchElement.innerHTML;
-            linkWrapper.innerHTML = existingContent + linkIndicator.outerHTML;
-            matchElement.innerHTML = linkWrapper.outerHTML;
+    const bestOf3HTML = createBestOf3MatchHTML(matchKey, player1Name, player2Name, player1Id, player2Id);
+    
+    // Replace the match-players content
+    existingMatchPlayers.outerHTML = `<div class="best-of-3-container">${bestOf3HTML}</div>`;
+    
+    // Update overall match winner visual if series is complete
+    const matchData = results.knockout[matchKey];
+    if (matchData.winner) {
+        matchElement.classList.add('series-complete');
+        if (matchData.winner === 'player1') {
+            matchElement.classList.add('player1-wins-series');
+        } else {
+            matchElement.classList.add('player2-wins-series');
         }
     }
 }
@@ -410,14 +479,15 @@ function updateFinalResults() {
     if (finalSf1Name) finalSf1Name.textContent = sf1Winner;
     if (finalSf2Name) finalSf2Name.textContent = sf2Winner;
     
-    // Show final result if available
-    if (results.knockout.final) {
+    // Show final result if available - now checking the winner property
+    const finalData = results.knockout.final;
+    if (finalData.winner) {
         const finalSf1 = document.getElementById('final-sf1');
         const finalSf2 = document.getElementById('final-sf2');
         
-        if (results.knockout.final === 'sf1' && finalSf1) {
+        if (finalData.winner === 'player1' && finalSf1) {
             finalSf1.classList.add('selected');
-        } else if (finalSf2) {
+        } else if (finalData.winner === 'player2' && finalSf2) {
             finalSf2.classList.add('selected');
         }
     }
@@ -425,17 +495,17 @@ function updateFinalResults() {
 
 // Get semifinal winner name
 function getSemifinalWinner(semifinal) {
-    const result = results.knockout[semifinal];
+    const matchData = results.knockout[semifinal];
     
-    if (semifinal === 'sf1') {
-        if (result === 'a1') return results.qualifiedA1;
-        if (result === 'b2') return results.qualifiedB2;
-        return 'SF1 Winner';
-    } else {
-        if (result === 'b1') return results.qualifiedB1;
-        if (result === 'a2') return results.qualifiedA2;
-        return 'SF2 Winner';
+    if (matchData.winner === 'player1') {
+        if (semifinal === 'sf1') return results.qualifiedA1;
+        if (semifinal === 'sf2') return results.qualifiedB1;
+    } else if (matchData.winner === 'player2') {
+        if (semifinal === 'sf1') return results.qualifiedB2;
+        if (semifinal === 'sf2') return results.qualifiedA2;
     }
+    
+    return semifinal === 'sf1' ? 'SF1 Winner' : 'SF2 Winner';
 }
 
 // Create HTML for matches grouped by rounds
@@ -667,24 +737,52 @@ function parseCSVResults(csvText) {
                 matchIndex++;
             }
         } else if (currentSection === 'semifinals') {
-            const sfKey = matchIndex === 0 ? 'sf1' : 'sf2';
-            if (result === 1) {
-                results.knockout[sfKey] = sfKey === 'sf1' ? 'a1' : 'b1';
-            } else if (result === 2) {
-                results.knockout[sfKey] = sfKey === 'sf1' ? 'b2' : 'a2';
+            // For best-of-3, determine which semifinal and add game result
+            const sfKey = player1.includes('SF1') || player2.includes('SF1') || 
+                         (matchIndex % 6 < 3) ? 'sf1' : 'sf2'; // Group games by 3s
+            
+            // Add game result
+            const gameResult = result === 1 ? 'player1' : (result === 2 ? 'player2' : null);
+            if (gameResult) {
+                results.knockout[sfKey].games.push(gameResult);
             }
+            
+            // Add game link
             if (gameLink) {
-                gameLinks.knockout[sfKey] = gameLink;
+                if (!gameLinks.knockout[sfKey]) gameLinks.knockout[sfKey] = [];
+                gameLinks.knockout[sfKey].push(gameLink);
             }
+            
+            // Check if series is complete (2 wins)
+            const player1Wins = results.knockout[sfKey].games.filter(g => g === 'player1').length;
+            const player2Wins = results.knockout[sfKey].games.filter(g => g === 'player2').length;
+            if (player1Wins >= 2) {
+                results.knockout[sfKey].winner = 'player1';
+            } else if (player2Wins >= 2) {
+                results.knockout[sfKey].winner = 'player2';
+            }
+            
             matchIndex++;
         } else if (currentSection === 'finals') {
-            if (result === 1) {
-                results.knockout.final = 'sf1';
-            } else if (result === 2) {
-                results.knockout.final = 'sf2';
+            // Add game result for finals
+            const gameResult = result === 1 ? 'player1' : (result === 2 ? 'player2' : null);
+            if (gameResult) {
+                results.knockout.final.games.push(gameResult);
             }
+            
+            // Add game link
             if (gameLink) {
-                gameLinks.knockout.final = gameLink;
+                if (!gameLinks.knockout.final) gameLinks.knockout.final = [];
+                gameLinks.knockout.final.push(gameLink);
+            }
+            
+            // Check if series is complete (2 wins)
+            const player1Wins = results.knockout.final.games.filter(g => g === 'player1').length;
+            const player2Wins = results.knockout.final.games.filter(g => g === 'player2').length;
+            if (player1Wins >= 2) {
+                results.knockout.final.winner = 'player1';
+            } else if (player2Wins >= 2) {
+                results.knockout.final.winner = 'player2';
             }
         }
     }

@@ -698,3 +698,72 @@ select:disabled {
     margin-bottom: 20px;
     font-style: italic;
 }
+
+/* Best-of-3 Styling */
+.best-of-3-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.series-score {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.series-score .series-winner {
+    color: #4CAF50;
+}
+
+.score-separator {
+    margin: 0 10px;
+    color: #666;
+}
+
+.best-of-3-game {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.best-of-3-game:hover {
+    border-color: #4CAF50;
+    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+}
+
+.game-header {
+    text-align: center;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.game-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.game-link:hover .best-of-3-game {
+    background-color: #f8f9ff;
+}
+
+.series-complete .best-of-3-game {
+    opacity: 0.8;
+}
+
+.player1-wins-series .best-of-3-container,
+.player2-wins-series .best-of-3-container {
+    border: 2px solid #4CAF50;
+    border-radius: 6px;
+    padding: 8px;
+    background-color: rgba(76, 175, 80, 0.05);
+}
