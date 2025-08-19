@@ -389,7 +389,7 @@ function createBestOf3MatchHTML(matchKey, player1Name, player2Name, player1Id, p
                         <span class="player-name">${player1Name}</span>
                         <span class="checkmark">✓</span>
                     </div>
-                    <span class="vs-label">${hasResult ? (gameResult ? '✓' : 'vs') : 'vs'}</span>
+                    <span class="vs-label">${(gameLink && !hasResult) ? '🔄' : 'vs'}</span>
                     <div class="${player2Class}" id="${matchKey}-${player2Id}-game-${gameNum}">
                         <span class="player-name">${player2Name}</span>
                         <span class="checkmark">✓</span>
@@ -738,8 +738,7 @@ function parseCSVResults(csvText) {
             }
         } else if (currentSection === 'semifinals') {
             // For best-of-3, determine which semifinal and add game result
-            const sfKey = player1.includes('SF1') || player2.includes('SF1') || 
-                         (matchIndex % 6 < 3) ? 'sf1' : 'sf2'; // Group games by 3s
+            const sfKey = matchIndex === 0 ? 'sf1' : 'sf2';
             
             // Add game result
             const gameResult = result === 1 ? 'player1' : (result === 2 ? 'player2' : null);
