@@ -8,7 +8,7 @@ Jeremiah Donley,Michael Xu,2,https://online-go.com/review/1521955
 Evan Tan,Edward Zhang,1,https://online-go.com/review/1521956
 Jeremiah Donley,Evan Tan,2,https://online-go.com/review/1522098
 Guanyu Song,Michael Xu,1,https://online-go.com/review/1522102
-Jeremiah Donley,Guanyu Song,0,https://online-go.com/review/1522549
+Jeremiah Donley,Guanyu Song,2,https://online-go.com/review/1522549
 Michael Xu,Edward Zhang,0,https://online-go.com/review/1522548
 
 # Group B
