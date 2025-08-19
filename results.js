@@ -64,8 +64,8 @@ let results = {
     },
     qualifiedA1: 'Group A 1st',
     qualifiedA2: 'Group A 2nd',
-    qualifiedB1: 'Group B 1st',
-    qualifiedB2: 'Group B 2nd'
+    qualifiedB1: 'Eric Yoder',
+    qualifiedB2: 'Qiyou Wu'
 };
 
 // Game links for completed matches
