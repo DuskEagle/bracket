@@ -257,10 +257,24 @@ function calculateGroupStanding(players, groupResults, matches) {
         }
     });
     
-    // Sort by wins (descending), then by losses (ascending)
+    // Sort by wins (descending), then by losses (ascending), then by head-to-head
     return standings.sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
-        return a.losses - b.losses;
+        if (a.losses !== b.losses) return a.losses - b.losses;
+        
+        // If wins and losses are equal, check head-to-head
+        const headToHeadMatch = matches.find(match => 
+            (match.player1 === a.player && match.player2 === b.player) ||
+            (match.player1 === b.player && match.player2 === a.player)
+        );
+        
+        if (headToHeadMatch && groupResults[headToHeadMatch.id]) {
+            const winner = groupResults[headToHeadMatch.id];
+            if (winner === a.player) return -1; // a won, so a comes first
+            if (winner === b.player) return 1;  // b won, so b comes first
+        }
+        
+        return 0; // No tiebreaker available
     });
 }
 
