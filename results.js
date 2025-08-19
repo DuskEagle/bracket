@@ -25,7 +25,7 @@ Qiyou Wu,Henry Zhang,1,https://online-go.com/review/1522099
 Eric Yoder,Daniel Zhou,1,https://online-go.com/review/1522100
 Yuan Zhou,Wanqi Zhu,1,https://online-go.com/review/1522101
 Qiyou Wu,Eric Yoder,2,https://online-go.com/review/1522550
-Henry Zhang,Wanqi Zhu,0,https://online-go.com/review/1522547
+Henry Zhang,Wanqi Zhu,2,https://online-go.com/review/1522547
 Daniel Zhou,Yuan Zhou,1,https://online-go.com/review/1522546
 
 # Semifinals
