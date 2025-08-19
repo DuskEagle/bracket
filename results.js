@@ -8,8 +8,8 @@ Jeremiah Donley,Michael Xu,2,https://online-go.com/review/1521955
 Evan Tan,Edward Zhang,1,https://online-go.com/review/1521956
 Jeremiah Donley,Evan Tan,2,https://online-go.com/review/1522098
 Guanyu Song,Michael Xu,1,https://online-go.com/review/1522102
-Jeremiah Donley,Guanyu Song,0,
-Michael Xu,Edward Zhang,0,
+Jeremiah Donley,Guanyu Song,0,https://online-go.com/review/1522549
+Michael Xu,Edward Zhang,0,https://online-go.com/review/1522548
 
 # Group B
 Qiyou Wu,Wanqi Zhu,1,https://online-go.com/review/1521383
@@ -24,9 +24,9 @@ Eric Yoder,Wanqi Zhu,1,https://online-go.com/review/1521959
 Qiyou Wu,Henry Zhang,1,https://online-go.com/review/1522099
 Eric Yoder,Daniel Zhou,1,https://online-go.com/review/1522100
 Yuan Zhou,Wanqi Zhu,1,https://online-go.com/review/1522101
-Qiyou Wu,Eric Yoder,0,
-Henry Zhang,Wanqi Zhu,0,
-Daniel Zhou,Yuan Zhou,0,
+Qiyou Wu,Eric Yoder,0,https://online-go.com/review/1522550
+Henry Zhang,Wanqi Zhu,0,https://online-go.com/review/1522547
+Daniel Zhou,Yuan Zhou,0,https://online-go.com/review/1522546
 
 # Semifinals
 Group A 1st,Group B 2nd,0,
