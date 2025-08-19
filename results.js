@@ -29,8 +29,8 @@ Henry Zhang,Wanqi Zhu,2,https://online-go.com/review/1522547
 Daniel Zhou,Yuan Zhou,1,https://online-go.com/review/1522546
 
 # Semifinals
-Guanyu Song,Qiyou Wu,0,https://online-go.com/review/1522697
-Michael Xu,Eric Yoder,0,https://online-go.com/review/1522698
+Guanyu Song,Qiyou Wu,1,https://online-go.com/review/1522697
+Eric Yoder,Michael Xu,1,https://online-go.com/review/1522698
 
 # Finals
 SF1 Winner,SF2 Winner,0,`;
@@ -66,8 +66,8 @@ let results = {
         groupA: {},
         groupB: {}
     },
-    qualifiedA1: 'Group A 1st',
-    qualifiedA2: 'Group A 2nd',
+    qualifiedA1: 'Guanyu Song',
+    qualifiedA2: 'Michael Xu',
     qualifiedB1: 'Eric Yoder',
     qualifiedB2: 'Qiyou Wu'
 };
