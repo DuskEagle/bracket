@@ -26,7 +26,7 @@ Eric Yoder,Daniel Zhou,1,https://online-go.com/review/1522100
 Yuan Zhou,Wanqi Zhu,1,https://online-go.com/review/1522101
 Qiyou Wu,Eric Yoder,0,https://online-go.com/review/1522550
 Henry Zhang,Wanqi Zhu,0,https://online-go.com/review/1522547
-Daniel Zhou,Yuan Zhou,0,https://online-go.com/review/1522546
+Daniel Zhou,Yuan Zhou,1,https://online-go.com/review/1522546
 
 # Semifinals
 Group A 1st,Group B 2nd,0,
