@@ -746,13 +746,12 @@ select:disabled {
     margin-bottom: 8px;
 }
 
-.game-link {
-    text-decoration: none;
-    color: inherit;
+.game-wrapper {
     display: block;
+    transition: all 0.3s ease;
 }
 
-.game-link:hover .best-of-3-game {
+.game-wrapper:hover .best-of-3-game {
     background-color: #f8f9ff;
 }
 

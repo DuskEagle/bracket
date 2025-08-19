@@ -400,9 +400,9 @@ function createBestOf3MatchHTML(matchKey, player1Name, player2Name, player1Id, p
         
         if (gameLink) {
             gamesHTML += `
-                <a href="${gameLink}" target="_blank" class="game-link">
+                <div class="game-wrapper" onclick="window.open('${gameLink}', '_blank')" style="cursor: pointer;">
                     ${gameContent}
-                </a>
+                </div>
             `;
         } else {
             gamesHTML += gameContent;
