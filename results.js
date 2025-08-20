@@ -33,6 +33,7 @@ Guanyu Song,Qiyou Wu,1,https://online-go.com/review/1522697
 Eric Yoder,Michael Xu,1,https://online-go.com/review/1522698
 Guanyu Song,Qiyou Wu,1,https://online-go.com/review/1523117
 Eric Yoder,Michael Xu,2,https://online-go.com/review/1523118
+Eric Yoder,Michael Xu,0,https://online-go.com/review/1523259
 
 # Finals
 SF1 Winner,SF2 Winner,0,`;
