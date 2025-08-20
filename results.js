@@ -31,6 +31,8 @@ Daniel Zhou,Yuan Zhou,1,https://online-go.com/review/1522546
 # Semifinals
 Guanyu Song,Qiyou Wu,1,https://online-go.com/review/1522697
 Eric Yoder,Michael Xu,1,https://online-go.com/review/1522698
+Guanyu Song,Qiyou Wu,0,https://online-go.com/review/1523117
+Eric Yoder,Michael Xu,0,https://online-go.com/review/1523118
 
 # Finals
 SF1 Winner,SF2 Winner,0,`;
@@ -737,8 +739,10 @@ function parseCSVResults(csvText) {
                 matchIndex++;
             }
         } else if (currentSection === 'semifinals') {
-            // For best-of-3, determine which semifinal and add game result
-            const sfKey = matchIndex === 0 ? 'sf1' : 'sf2';
+            // For best-of-3, determine which semifinal based on player names
+            // First 2 games: Guanyu Song vs Qiyou Wu = SF1
+            // Last 2 games: Eric Yoder vs Michael Xu = SF2
+            const sfKey = (player1 === 'Guanyu Song' || player2 === 'Guanyu Song') ? 'sf1' : 'sf2';
             
             // Add game result
             const gameResult = result === 1 ? 'player1' : (result === 2 ? 'player2' : null);
