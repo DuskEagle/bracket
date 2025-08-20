@@ -369,7 +369,7 @@ function createBestOf3MatchHTML(matchKey, player1Name, player2Name, player1Id, p
         const gameNum = i + 1;
         const gameResult = games[i];
         const gameLink = matchGameLinks[i];
-        const hasResult = gameResult !== undefined;
+        const hasResult = gameResult !== undefined && gameResult !== null;
         
         // Determine visual state
         let player1Class = 'player-button results-only';
@@ -740,16 +740,12 @@ function parseCSVResults(csvText) {
                 matchIndex++;
             }
         } else if (currentSection === 'semifinals') {
-            // For best-of-3, determine which semifinal based on player names
-            // First 2 games: Guanyu Song vs Qiyou Wu = SF1
-            // Last 2 games: Eric Yoder vs Michael Xu = SF2
+            // Determine which semifinal based on player names
             const sfKey = (player1 === 'Guanyu Song' || player2 === 'Guanyu Song') ? 'sf1' : 'sf2';
             
-            // Add game result
+            // Add game result (null for in-progress games)
             const gameResult = result === 1 ? 'player1' : (result === 2 ? 'player2' : null);
-            if (gameResult) {
-                results.knockout[sfKey].games.push(gameResult);
-            }
+            results.knockout[sfKey].games.push(gameResult);
             
             // Add game link
             if (gameLink) {
@@ -757,7 +753,7 @@ function parseCSVResults(csvText) {
                 gameLinks.knockout[sfKey].push(gameLink);
             }
             
-            // Check if series is complete (2 wins)
+            // Check if series is complete (2 wins) after each game
             const player1Wins = results.knockout[sfKey].games.filter(g => g === 'player1').length;
             const player2Wins = results.knockout[sfKey].games.filter(g => g === 'player2').length;
             if (player1Wins >= 2) {
