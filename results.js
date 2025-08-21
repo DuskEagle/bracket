@@ -36,7 +36,7 @@ Eric Yoder,Michael Xu,2,https://online-go.com/review/1523118
 Eric Yoder,Michael Xu,1,https://online-go.com/review/1523259
 
 # Finals
-Guanyu Song,Eric Yoder,0,https://online-go.com/review/1523739`;
+Guanyu Song,Eric Yoder,1,https://online-go.com/review/1523739`;
 
 // Tournament data
 const groupA = [
